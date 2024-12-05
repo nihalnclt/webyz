@@ -20,16 +20,14 @@ export default function HomePage() {
             <span className="font-bold">Webyz</span>
           </Link>
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-4">
-              <span>Pricing</span>
-              <span>Blog</span>
-              <span>Docs</span>
-            </div>
-            <div>
-              <button className="px-3 py-2 text-sm font-medium text-white bg-[#3AA6B9] rounded-md">
-                Get Started
-              </button>
-            </div>
+            <span>Pricing</span>
+            <span>Blog</span>
+            <span>Docs</span>
+          </div>
+          <div>
+            <button className="px-3 py-2 text-sm font-medium text-white bg-[#3AA6B9] rounded-md">
+              Get Started
+            </button>
           </div>
         </div>
       </div>

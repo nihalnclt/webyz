@@ -27,7 +27,7 @@ export default function layout({
 
       <div className="text-center">
         <nav className="block">
-          <ul className="flex items-center justify-center text-xs list-disc">
+          <ul className="flex items-center justify-center gap-5 text-xs list-disc">
             <li>Webyz.io</li>
             <li>Support</li>
             <li>Developers & API</li>
