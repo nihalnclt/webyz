@@ -1,0 +1,106 @@
+package core
+
+import (
+	"context"
+	"fmt"
+	"log"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
+
+	"github.com/jmoiron/sqlx"
+	"github.com/knadh/koanf/v2"
+	"github.com/knadh/stuffbin"
+	"github.com/nihalnclt/webyz/internal/core"
+	"github.com/nihalnclt/webyz/internal/models"
+)
+
+const (
+	queryFilePath = "queries.sql"
+)
+
+// App contains the "global" components that are
+// passed around, especially through HTTP handlers.
+type App struct {
+	core     *core.Core
+	chReload chan os.Signal
+	pgDB     *sqlx.DB // PostgresSQL
+	chDB     *sqlx.DB // Clickhouse
+	queries  *models.Queries
+}
+
+var (
+	ko      = koanf.New(".")
+	fs      stuffbin.FileSystem
+	db      *sqlx.DB
+	queries *models.Queries
+
+	// Compile-time variables.
+	buildString string
+
+	appDir = "."
+)
+
+func init() {
+	initFlags()
+
+	// Display version
+	if ko.Bool("version") {
+		fmt.Println(buildString)
+		os.Exit(0)
+	}
+
+	log.Println(buildString)
+
+	// if ko.Bool("new-config") {
+	// 	path := ko.String("config")[0]
+	// 	if err := newConfigFile(path); err != nil {
+	// 		log.Println(err)
+	// 		os.Exit(1)
+	// 	}
+	// 	log.Printf("generated %s. Edit and run --install", path)
+	// 	os.Exit(0)
+	// }
+
+	// Load config files to pick up the database settings first.
+	initConfigFiles(ko.Strings("config"), ko)
+
+	db = initDB()
+	fs = initFS(appDir)
+
+	// Read the SQL queries from the queries file.
+	qMap := readQueries(queryFilePath, fs)
+
+	// Load settings from the DB.
+	// if q, ok := qMap["get-settings"]; ok {
+	// 	initSettings(q.query, db, ko)
+	// }
+
+	// Prepare queries.
+	queries = prepareQueries(qMap, db)
+}
+
+func main() {
+	app := &App{
+		db: db,
+	}
+
+	app.queries = queries
+
+	srv := initHTTPServer(app)
+
+	app.chReload = make(chan os.Signal)
+	signal.Notify(app.chReload, syscall.SIGHUP)
+
+	closerWait := make(chan bool)
+	<-awaitReload(app.chReload, closerWait, func() {
+		// Stop the HTTP server
+		ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+		defer cancel()
+		srv.Shutdown(ctx)
+
+		// Signal the close
+		closerWait <- true
+	})
+}

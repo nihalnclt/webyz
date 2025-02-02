@@ -1,0 +1,26 @@
+[app]
+address = "localhost:3041"
+
+[db.postgres]
+host = "localhost"
+port = 5432
+user = "postgres"
+password = "posgres"
+dbname = "webyz"
+ssl_mode = "disable"
+max_open = 25
+max_idle = 25
+max_lifetime = "300s"
+
+# Optional space separated Postgres DSN params. eg: "application_name=webyz gssencmode=disable"
+params = ""
+
+
+[db.clickhouse]
+host = "localhost"
+port = 9000
+user = ""
+password = ""
+dbname = "webyz"
+
+

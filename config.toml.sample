@@ -1,0 +1,19 @@
+[app]
+address = "localhost:3041"
+
+[db]
+host = "localhost"
+port = 5432
+user = "postgres"
+password = "posgres"
+
+# Ensure that this database has been created in postgres
+dbname = "webyz"
+
+ssl_mode = "disable"
+max_open = 25
+max_idle = 25
+max_lifetime = "300s"
+
+# Optional space separated Postgres DSN params. eg: "application_name=webyz gssencmode=disable"
+params = ""

@@ -1,4 +1,4 @@
-package main
+package core
 
 import (
 	"errors"
@@ -11,18 +11,18 @@ import (
 	"syscall"
 	"time"
 
-	_ "github.com/ClickHouse/clickhouse-go/v2"
 	"github.com/go-playground/validator/v10"
 	"github.com/jmoiron/sqlx"
 	"github.com/knadh/goyesql/v2"
-	goyesqlx "github.com/knadh/goyesql/v2/sqlx"
 	"github.com/knadh/koanf/parsers/toml"
 	"github.com/knadh/koanf/providers/file"
+	"github.com/knadh/koanf/providers/posflag"
 	"github.com/knadh/koanf/v2"
 	"github.com/knadh/stuffbin"
 	"github.com/labstack/echo/v4"
 	_ "github.com/lib/pq"
 	"github.com/nihalnclt/webyz/internal/models"
+	flag "github.com/spf13/pflag"
 )
 
 type CustomValidator struct {
@@ -36,73 +36,24 @@ func (cv *CustomValidator) Validate(i interface{}) error {
 	return nil
 }
 
-type DBConnections struct {
-	Postgres   *sqlx.DB
-	Clickhouse *sqlx.DB
-}
+func initFlags() {
+	f := flag.NewFlagSet("config", flag.ContinueOnError)
 
-func initDB() *DBConnections {
-	var cfg struct {
-		Postgres struct {
-			Host     string `koanf:"host"`
-			Port     int    `koanf:"port"`
-			User     string `koanf:"user"`
-			Password string `koanf:"password"`
-			DBName   string `koanf:"dbname"`
-		} `koanf:"postgres"`
-		ClickHouse struct {
-			Host     string `koanf:"host"`
-			Port     int    `koanf:"port"`
-			User     string `koanf:"user"`
-			Password string `koanf:"password"`
-			DBName   string `koanf:"dbname"`
-		} `koanf:"clickhouse"`
+	// Register the command line flags
+	f.StringSlice("config", []string{"config.toml"},
+		"path to one or more config files (will be merged in order)")
+	if err := f.Parse(os.Args[1:]); err != nil {
+		log.Fatalf("error loading flags: %v", err)
 	}
 
-	// Load configuration from koanf
-	if err := ko.Unmarshal("db", &cfg); err != nil {
-		log.Fatalf("error loading db config: %v", err)
-	}
-
-	// PostgresSQL connection
-	postgresDSN := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=%s",
-		cfg.Postgres.Host, cfg.Postgres.Port, cfg.Postgres.User, cfg.Postgres.Password,
-		cfg.Postgres.DBName, "disable")
-
-	log.Printf("Connecting to postgresSQL: %s:%d/%s", cfg.Postgres.Host, cfg.Postgres.Port, cfg.Postgres.DBName)
-	postgresDB, err := sqlx.Connect("postgres", postgresDSN)
-	if err != nil {
-		log.Fatalf("error connecting to postgresSQL: %v", err)
-	}
-
-	// ClickHouse connection
-	clickhouseDSN := fmt.Sprintf("clickhouse://%s:%s@%s:%d/%s",
-		cfg.ClickHouse.User, cfg.ClickHouse.Password, cfg.ClickHouse.Host, cfg.ClickHouse.Port, cfg.ClickHouse.DBName)
-
-	log.Printf("Connecting to clickHouse: %s:%d/%s", cfg.ClickHouse.Host, cfg.ClickHouse.Port, cfg.ClickHouse.DBName)
-	clickhouseDB, err := sqlx.Connect("clickhouse", clickhouseDSN)
-	if err != nil {
-		log.Fatalf("error connecting to clickHouse: %v", err)
-	}
-
-	return &DBConnections{
-		Postgres:   postgresDB,
-		Clickhouse: clickhouseDB,
+	if err := ko.Load(posflag.Provider(f, ".", ko), nil); err != nil {
+		log.Fatalf("error loading config: %v", err)
 	}
 }
 
-func initConfigFiles(files []string, ko *koanf.Koanf) {
-	for _, f := range files {
-		if err := ko.Load(file.Provider(f), toml.Parser()); err != nil {
-			if os.IsNotExist(err) {
-				log.Fatal("config file not found.")
-			}
-			log.Fatalf("error loading config file: %v", err)
-		}
-	}
-}
-
-func initHttpServer(app *App) *echo.Echo {
+// initHTTPServer initializes and runs the app's main HTTP server
+func initHTTPServer(app *App) *echo.Echo {
+	// Initialize the http server
 	var srv = echo.New()
 	srv.HideBanner = true
 
@@ -114,6 +65,7 @@ func initHttpServer(app *App) *echo.Echo {
 		}
 	})
 
+	// Assigning custom validator
 	srv.Validator = &CustomValidator{validator: validator.New()}
 
 	// Register all HTTP handlers
@@ -123,9 +75,9 @@ func initHttpServer(app *App) *echo.Echo {
 	go func() {
 		if err := srv.Start(":8080"); err != nil {
 			if errors.Is(err, http.ErrServerClosed) {
-				log.Println("HTTP server shutdown")
+				log.Println("HTTP server shut down")
 			} else {
-				log.Fatalf("Error starting http server: %v", err)
+				log.Fatalf("error starting HTTP server: %v", err)
 			}
 		}
 	}()
@@ -134,6 +86,7 @@ func initHttpServer(app *App) *echo.Echo {
 }
 
 func awaitReload(sigChan chan os.Signal, closerWait chan bool, closer func()) chan bool {
+	// The blocking signal handler that main() waits on.
 	out := make(chan bool)
 
 	// Respawn a new process and exit the running one.
@@ -144,8 +97,10 @@ func awaitReload(sigChan chan os.Signal, closerWait chan bool, closer func()) ch
 		os.Exit(0)
 	}
 
+	// Listen for reload signal
 	go func() {
 		for range sigChan {
+			log.Println("reloading on signal...")
 
 			go closer()
 			select {
@@ -167,8 +122,9 @@ func initFS(appDir string) stuffbin.FileSystem {
 	// when there is an embeded filesystem not found.
 
 	var appFiles = []string{
-		"./internal/db/pgqueries.sql:pgqueries.sql",
-		"./internal/db/chqueries.sql:chqueries.sql",
+		"./config.toml.sample:config.toml.sample",
+		"./internal/db/queries.sql:queries.sql",
+		// "./schema.sql:schema.sql",
 	}
 
 	// Get the executable's execPath.
@@ -227,6 +183,52 @@ func joinFSPaths(root string, paths []string) []string {
 	return out
 }
 
+// initDB initializes the main DB connection pool and parse and loads app's
+// SQL queries into a prepared query map.
+func initDB() *sqlx.DB {
+	var c struct {
+		Host        string        `koanf:"host"`
+		Port        int           `koanf:"port"`
+		User        string        `koanf:"user"`
+		Password    string        `koanf:"password"`
+		DBName      string        `koanf:"dbname"`
+		SSLMode     string        `koanf:"ssl_mode"`
+		Params      string        `koanf:"params"`
+		MaxOpen     int           `koanf:"max_open"`
+		MaxIdle     int           `koanf:"max_idle"`
+		MaxLifetime time.Duration `koanf:"max_lifetime"`
+	}
+	if err := ko.Unmarshal("db", &c); err != nil {
+		log.Fatalf("error loading db config: %v", err)
+	}
+
+	log.Printf("connecting to db: %s:%d/%s", c.Host, c.Port, c.DBName)
+	db, err := sqlx.Connect("postgres",
+		fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=%s %s", c.Host, c.Port, c.User, c.Password, c.DBName, c.SSLMode, c.Params))
+	if err != nil {
+		log.Fatalf("error connecting to DB: %v", err)
+	}
+
+	db.SetMaxOpenConns(c.MaxOpen)
+	db.SetMaxIdleConns(c.MaxIdle)
+	db.SetConnMaxLifetime(c.MaxLifetime)
+
+	return db
+}
+
+func initConfigFiles(files []string, ko *koanf.Koanf) {
+	fmt.Println("Files:", files)
+	for _, f := range files {
+		log.Printf("reading config: %s", f)
+		if err := ko.Load(file.Provider(f), toml.Parser()); err != nil {
+			if os.IsNotExist(err) {
+				log.Fatal("config file not found. If there isn't one yet, run --new-config to generate one.")
+			}
+			log.Fatalf("error loading config file: %v", err)
+		}
+	}
+}
+
 func readQueries(sqlFile string, fs stuffbin.FileSystem) goyesql.Queries {
 	// Load SQL queries
 	qB, err := fs.Read(sqlFile)
@@ -241,26 +243,12 @@ func readQueries(sqlFile string, fs stuffbin.FileSystem) goyesql.Queries {
 	return qMap
 }
 
-func preparePgQueries(qMap goyesql.Queries, db *sqlx.DB) *models.PgQueries {
-	var q models.PgQueries
-
-	if err := goyesqlx.ScanToStruct(&q, qMap, db.Unsafe()); err != nil {
-		log.Fatalf("error preparing SQL queries: %v", err)
-	}
-
-	fmt.Printf("Prepared CH Queries: %+v\n", q) // Debugging log
-
-	return &q
-}
-
-func prepareChQueries(qMap goyesql.Queries, db *sqlx.DB) *models.ChQueries {
+func prepareQueries(qMap goyesql.Queries, db *sqlx.DB) *models.Queries {
 	// Scan and prepare all queries
-	var q models.ChQueries
-	if err := goyesqlx.ScanToStruct(&q, qMap, db.Unsafe()); err != nil {
+	var q models.Queries
+	if err := goyesql.ScanToStruct(&q, qMap, db.DB); err != nil {
 		log.Fatalf("error preparing SQL queries: %v", err)
 	}
-
-	fmt.Printf("Prepared CH Queries: %+v\n", q) // Debugging log
 
 	return &q
 }
