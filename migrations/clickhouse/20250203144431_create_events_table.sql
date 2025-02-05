@@ -123,7 +123,7 @@ GROUP BY
 SELECT 'down SQL query';
 -- +goose StatementEnd
 
-DROP MATERIALIZED VIEW IF EXISTS webyz_analytics.hourly_aggregates_mv;
+DROP TABLE IF EXISTS webyz_analytics.hourly_aggregates_mv;
 DROP TABLE IF EXISTS webyz_analytics.hourly_aggregates;
 DROP TABLE IF EXISTS webyz_analytics.event_data;
 DROP TABLE IF EXISTS webyz_analytics.sessions;
