@@ -5,6 +5,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/nihalnclt/webyz/internal/models"
+	"github.com/nihalnclt/webyz/internal/utils"
 	"github.com/volatiletech/null/v9"
 )
 
@@ -28,7 +29,11 @@ func handleRegister(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	nullPassword := null.StringFrom(request.Password)
+	hashedPassword, err := utils.HashPassword(request.Password)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "Password hashing failed")
+	}
+	nullPassword := null.StringFrom(hashedPassword)
 
 	u := models.User{
 		Name:     request.Name,

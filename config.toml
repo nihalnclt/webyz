@@ -21,6 +21,6 @@ host = "localhost"
 port = 9000
 user = ""
 password = ""
-dbname = "webyz"
+dbname = "webyz_analytics"
 
 

@@ -4,10 +4,12 @@ SELECT 'up SQL query';
 -- +goose StatementEnd
 
 CREATE TABLE users (
-  id          SERIAL PRIMARY KEY,
-  name        TEXT NOT NULL,
+  id          BIGSERIAL PRIMARY KEY,
+  displayName TEXT NOT NULL,
   email       TEXT NOT NULL UNIQUE,
   password    TEXT,
+  logoUrl     TEXT,
+  is_active   BOOLEAN NOT NULL,
   created_at  TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at  TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
