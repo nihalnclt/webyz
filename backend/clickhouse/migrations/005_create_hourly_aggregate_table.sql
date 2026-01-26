@@ -1,0 +1,15 @@
+CREATE TABLE webyz_analytics.hourly_aggregates (
+  `website_id` UUID,
+  `hour` DateTime('UTC'),
+  `hostname` LowCardinality(String),
+  `browser` LowCardinality(String),
+  `os` LowCardinality(String),
+  `device` LowCardinality(String),
+  `country` LowCardinality(FixedString(2)),
+  `city` String CODEC(ZSTD(3)),
+  `views` SimpleAggregateFunction(sum, UInt64),
+)
+ENGINE = AggregatingMergeTree
+PARTITION BY toYYYYMM(hour)
+ORDER BY (website_id, hour, hostname, browser, os, device, country)
+SETTINGS index_granularity = 8192;
