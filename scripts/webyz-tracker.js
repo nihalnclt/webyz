@@ -67,7 +67,7 @@
       const sameSite = options.sameSite || "Lax";
 
       let cookieString = `${encodeURIComponent(name)}=${encodeURIComponent(
-        JSON.stringify(value)
+        JSON.stringify(value),
       )}`;
       cookieString += `;expires=${expires.toUTCString()}`;
       cookieString += `;path=${path}`;
@@ -114,7 +114,7 @@
     isLocalhost: () => {
       return (
         /^localhost$|^127(\.[0-9]+){0,2}\.[0-9]+$|^\[::1?\]$/.test(
-          location.hostname
+          location.hostname,
         ) || location.protocol === "file:"
       );
     },
@@ -190,7 +190,7 @@
     create: () => {
       state.sessionId = utils.generateId();
       state.visitorId = state.visitorId || utils.generateId();
-      state.lastActivity = Date.now;
+      state.lastActivity = Date.now();
       session.save();
     },
 
@@ -226,7 +226,12 @@
         return Promise.resolve();
       }
 
-      return network.send;
+      return network.sendImage(payload).catch(() => {
+        if (navigator.sendBeacon) {
+          return network.sendBeacon(payload);
+        }
+        return network.sendFetch(payload);
+      });
     },
 
     sendBeacon: (payload) => {

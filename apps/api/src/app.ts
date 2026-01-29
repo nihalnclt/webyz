@@ -25,14 +25,13 @@ export default fp(async (fastify: FastifyInstance, opts) => {
   // })
 
   fastify.register(fastifyAutoload, {
-    dir: path.join(import.meta.dirname, 'routes'),
+    dir: path.join(import.meta.dirname, "routes"),
     autoHooks: true,
     cascadeHooks: true,
-    options: { ...opts }
-  })
+    options: { prefix: "/api", ...opts },
+  });
 
   console.log("CLICKHOUSE_HOST", process.env.CLICKHOUSE_HOST);
-
 
   fastify.setErrorHandler((err: any, request, reply) => {
     fastify.log.error(
@@ -45,7 +44,7 @@ export default fp(async (fastify: FastifyInstance, opts) => {
           params: request.params,
         },
       },
-      "Unhandled error occurred"
+      "Unhandled error occurred",
     );
 
     reply.code(err.statusCode ?? 500);
@@ -77,12 +76,12 @@ export default fp(async (fastify: FastifyInstance, opts) => {
             params: request.params,
           },
         },
-        "Resource not found"
+        "Resource not found",
       );
 
       reply.code(404);
 
       return { message: "Not Found" };
-    }
+    },
   );
 });

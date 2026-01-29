@@ -1,11 +1,16 @@
 import Fastify from "fastify";
-import pino from "pino";
 import closeWithGrace from "close-with-grace";
 
 import serviceApp from "./app.js";
 
 const app = Fastify({
   // logger: pino({ level: process.env.LOG_LEVEL }),
+  logger: {
+    level: process.env.LOG_LEVEL,
+    transport: {
+      target: "@fastify/one-line-logger",
+    },
+  },
   ajv: {
     customOptions: {
       coerceTypes: "array", // change type of data to match type keyword

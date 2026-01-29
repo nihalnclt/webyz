@@ -1,7 +1,7 @@
 import { FastifyInstance } from "fastify";
 
 const plugin = async (fastify: FastifyInstance) => {
-  fastify.get("/", {}, async function () {
+  fastify.get("/dd", {}, async function () {
     return { message: "Welcome to the official fastify demo!" };
   });
 };

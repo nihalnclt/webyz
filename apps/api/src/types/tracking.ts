@@ -11,8 +11,8 @@ export interface TrackingPayload {
   lang?: string;
   screen?: string;
   ts: number;
-  new_visitor?: 0 | 1;
-  new_session?: 0 | 1;
+  new_visitor?: 0 | 1 | "0" | "1";
+  new_session?: 0 | 1 | "0" | "1";
   name?: string;
   [key: string]: any;
 }

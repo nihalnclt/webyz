@@ -11,7 +11,7 @@
     "typecheck": "turbo run typecheck",
     "clean": "turbo run clean && rimraf node_modules"
   },
-  "packageManager": "pnpm@9.15.0",
+  "packageManager": "pnpm@10.28.2",
   "engines": {
     "node": ">=22"
   },
