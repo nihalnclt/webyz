@@ -10,26 +10,32 @@ export const track = async (
   payload: TrackingPayload,
   request: FastifyRequest,
 ) => {
-  // Extract client information
-  const clientInfo = extractClientInfo(request);
+  try {
+    // Extract client information
+    const clientInfo = extractClientInfo(request);
 
-  // Bot detection
-  if (isBot(clientInfo.userAgent)) {
-    return { success: false, error: "Bot detected" };
+    // Bot detection
+    if (isBot(clientInfo.userAgent)) {
+      return { success: false, error: "Bot detected" };
+    }
+
+    // IP blocking
+    // if (blocke)
+
+    // Process the event
+    const processedEvent = await processEvent(payload, clientInfo, request);
+
+    // Store the event
+
+    // Update session if it's pageview
+    if (payload.t === "pageview") {
+      await updateSession(request.server.clickhouse, processedEvent, payload);
+    }
+
+    return { success: true, eventId: processedEvent.eventId };
+  } catch (error) {
+    console.log(error)
+    request.log.error(error, "track failed");
+    return { success: false, error: "internal_error" };
   }
-
-  // IP blocking
-  // if (blocke)
-
-  // Process the event
-  const processedEvent = await processEvent(payload, clientInfo, request);
-
-  // Store the event
-
-  // Update session if it's pageview
-  if (payload.t === "pageview") {
-    await updateSession(request.server.clickhouse, processedEvent, payload);
-  }
-
-  return { success: true, eventId: processedEvent.eventId };
 };

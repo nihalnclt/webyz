@@ -22,7 +22,7 @@
     pageviewId: "",
   };
 
-  const SCRIPT_NAME = "webyz-tracker";
+  const SCRIPT_NAME = "script";
   const COOKIE_NAME = "_webyz";
   const SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutes
   const DNT_VALUES = ["1", 1, "yes", true];
@@ -226,12 +226,12 @@
         return Promise.resolve();
       }
 
-      return network.sendImage(payload).catch(() => {
-        if (navigator.sendBeacon) {
-          return network.sendBeacon(payload);
-        }
+      // return network.sendImage(payload).catch(() => {
+        // if (navigator.sendBeacon) {
+        //   return network.sendBeacon(payload);
+        // }
         return network.sendFetch(payload);
-      });
+      // });
     },
 
     sendBeacon: (payload) => {
@@ -455,11 +455,14 @@
   const init = () => {
     if (state.initialized) return;
 
+    console.log(
+      document.currentScript,
+      document.querySelector(`script[src*="${SCRIPT_NAME}"]`),
+    );
+
     const script =
       document.currentScript ||
       document.querySelector(`script[src*="${SCRIPT_NAME}"]`);
-
-    console.log("debug", config.debug, script);
 
     if (script) {
       config.siteId = script.getAttribute("data-site-id") || config.siteId;
@@ -477,6 +480,8 @@
       config.respectDNT = script.getAttribute("data-respect-dnt") !== "false";
       config.debug = script.getAttribute("data-debug") === "true";
     }
+
+    console.log("debug", config.debug, script);
 
     session.init();
 

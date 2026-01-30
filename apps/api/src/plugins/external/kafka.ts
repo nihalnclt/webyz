@@ -1,8 +1,8 @@
 import fp from "fastify-plugin";
 import { Kafka } from "kafkajs";
+import { KAFKA_BROKERS } from "../../config/env.js";
 
 const KAFKA_ENABLED = false;
-const KAFKA_BROKERS = [];
 
 export default fp(async (fastify) => {
   if (!KAFKA_ENABLED) return;

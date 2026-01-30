@@ -3,6 +3,8 @@ import { FastifyInstance } from "fastify";
 import rateLimit from "@fastify/rate-limit";
 import fp from "fastify-plugin";
 import fastifyAutoload from "@fastify/autoload";
+import fastifyStatic from "@fastify/static";
+import cors from "@fastify/cors";
 
 export const options = {
   ajv: {
@@ -14,6 +16,18 @@ export const options = {
 };
 
 export default fp(async (fastify: FastifyInstance, opts) => {
+  fastify.register(fastifyStatic, {
+    root: path.join(process.cwd(), "/public"),
+    prefix: "/",
+  });
+
+  fastify.register(cors, {
+    origin: true,
+    methods: ["POST", "OPTIONS"],
+    allowedHeaders: ["content-type"],
+    maxAge: 86400,
+  });
+
   await fastify.register(fastifyAutoload, {
     dir: path.join(import.meta.dirname, "plugins/external"),
     options: { ...opts },

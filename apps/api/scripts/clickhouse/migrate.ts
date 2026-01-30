@@ -5,7 +5,11 @@ import dotenv from "dotenv";
 dotenv.config();
 
 async function runMigrations() {
-  console.log("CLICKHOUSE_HOST", process.env.CLICKHOUSE_URL);
+  console.log("CLICKHOUSE_URL", process.env.CLICKHOUSE_URL);
+
+
+  // /Users/nihal/Documents/Mine/webyz/apps/api/clickhouse/migrations
+  // /Users/nihal/Documents/Mine/webyz/apps/api/scripts/clickhouse/migrations
 
   const client = createClient({
     url: process.env.CLICKHOUSE_URL,
@@ -16,7 +20,7 @@ async function runMigrations() {
 
   const migrationsDir = path.join(
     import.meta.dirname,
-    "../clickhouse/migrations"
+    "../../clickhouse/migrations"
   );
   const files = readdirSync(migrationsDir).filter((f) => f.endsWith(".sql"));
 

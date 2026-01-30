@@ -1,6 +1,6 @@
 CREATE TABLE webyz_analytics.event_data (
-  `event_id` UUID,
-  `website_id` UUID,
+  `event_id` String,
+  `website_id` String,
   `data_key` LowCardinality(String),
   `string_value` Nullable(String) CODEC(ZSTD(3)),
   `number_value` Nullable(Decimal64(4)),

@@ -1,8 +1,8 @@
 CREATE TABLE webyz_analytics.events (
-  `event_id` UUID,
-  `website_id` UUID,
-  `session_id` UUID,
-  `user_id` UUID,
+  `event_id` String,
+  `website_id` String,
+  `session_id` String,
+  `user_id` String,
   `event_type` LowCardinality(String),
   `event_name` LowCardinality(String),
   `timestamp` DateTime('UTC') CODEC(Delta(4), LZ4),

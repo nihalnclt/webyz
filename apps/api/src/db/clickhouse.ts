@@ -28,8 +28,8 @@ export const getSession = async (
     query: `
       SELECT *
       FROM webyz_analytics.sessions
-      WHERE website_id = {websiteId:UUID}
-        AND session_id = {sessionId:UUID}
+      WHERE website_id = {websiteId:String}
+        AND session_id = {sessionId:String}
       ORDER BY end_time DESC
       LIMIT 1
     `,
@@ -40,6 +40,7 @@ export const getSession = async (
   });
 
   const { data } = await result.json<SessionRow>();
+  // const { data } = await result.json<{ data: SessionRow[] }>();
 
   return data.length ? data[0] : null;
 };
@@ -55,8 +56,8 @@ export const upsertSession = async (
         session_id: session.sessionId,
         website_id: session.websiteId,
         user_id: session.userId,
-        start_time: session.startTime,
-        end_time: session.endTime,
+        start_time: Math.floor(session.startTime.getTime() / 1000),
+        end_time: Math.floor(session.endTime.getTime() / 1000),
         duration_seconds: session.durationSeconds,
         entry_page: session.entryPage,
         exit_page: session.exitPage,

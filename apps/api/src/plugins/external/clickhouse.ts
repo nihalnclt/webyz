@@ -6,7 +6,7 @@ export default fp(async (fastify) => {
     host: process.env.CLICKHOUSE_HOST,
     username: process.env.CLICKHOUSE_USER,
     password: process.env.CLICKHOUSE_PASSWORD,
-    database: "default",
+    database: "webyz_analytics",
   });
 
   fastify.decorate("clickhouse", clickhouse);

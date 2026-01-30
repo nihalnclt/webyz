@@ -31,8 +31,7 @@ export const publishTracking = async (
       ],
     });
   } catch (error) {
-    // fail-safe fallback
-    // TODO: Add a log here
+    request.log.error(error, "Kafka publish failed");
     await track(payload, request);
   }
 };

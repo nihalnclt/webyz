@@ -1,5 +1,5 @@
 CREATE TABLE webyz_analytics.hourly_aggregates (
-  `website_id` UUID,
+  `website_id` String,
   `hour` DateTime('UTC'),
   `hostname` LowCardinality(String),
   `browser` LowCardinality(String),

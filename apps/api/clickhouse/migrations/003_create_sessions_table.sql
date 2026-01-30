@@ -1,7 +1,7 @@
 CREATE TABLE webyz_analytics.sessions (
-  `session_id` UUID,
-  `website_id` UUID,
-  `user_id` UUID,
+  `session_id` String,
+  `website_id` String,
+  `user_id` String,
   `start_time` DateTime('UTC') CODEC(Delta(4), LZ4),
   `end_time` DateTime('UTC') CODEC(Delta(4), LZ4),
   `duration_seconds` UInt32,
