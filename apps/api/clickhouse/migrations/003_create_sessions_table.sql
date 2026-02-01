@@ -10,12 +10,19 @@ CREATE TABLE webyz_analytics.sessions (
   `page_views` UInt32,
   `events` UInt32,
   `hostname` LowCardinality(String),
-  `browser` LowCardinality(String),
-  `os` LowCardinality(String),
-  `device` LowCardinality(String),
+  `browser_family` LowCardinality(String),
+  `browser_version` LowCardinality(String),
+  `os_family` LowCardinality(String),
+  `os_version` LowCardinality(String),
+  `device_type` LowCardinality(String),
+  `device_brand` LowCardinality(String),
   `country` LowCardinality(FixedString(2)),
-  `city` LowCardinality(String)
+  `sub_division_1` LowCardinality(String),
+  `sub_division_2` LowCardinality(String),
+  `city` LowCardinality(String),
+  `updated_at` DateTime64(3, 'UTC')
 )
-ENGINE = ReplacingMergeTree(end_time)
+ENGINE = ReplacingMergeTree(updated_at)
+PARTITION BY toYYYYMM(start_time)
 ORDER BY (website_id, session_id)
 SETTINGS index_granularity = 8192;

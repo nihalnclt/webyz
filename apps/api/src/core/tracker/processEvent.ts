@@ -1,7 +1,11 @@
 import { FastifyRequest } from "fastify";
 import { randomUUID } from "crypto";
 
-import { ClientInfo, TrackingPayload } from "../../types/tracking.js";
+import {
+  ClientInfo,
+  EventData,
+  TrackingPayload,
+} from "../../types/tracking.js";
 import {
   extractClickIds,
   extractUtmParams,
@@ -17,7 +21,7 @@ export const processEvent = async (
   payload: TrackingPayload,
   clientInfo: ClientInfo,
   request: FastifyRequest,
-) => {
+): Promise<EventData> => {
   const eventId = randomUUID();
   const timestamp = payload.ts ? new Date(payload.ts * 1000) : new Date();
 
@@ -63,7 +67,7 @@ export const processEvent = async (
     hostname: hostname || "",
     browser: clientInfo.browser,
     os: clientInfo.os,
-    device: clientInfo.device,
+    deviceType: clientInfo.deviceType,
     screen: payload.screen || "",
     language: payload.lang || "",
     country: geoData.country || "",

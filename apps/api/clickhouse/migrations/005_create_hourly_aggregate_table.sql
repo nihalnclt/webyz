@@ -4,7 +4,7 @@ CREATE TABLE webyz_analytics.hourly_aggregates (
   `hostname` LowCardinality(String),
   `browser` LowCardinality(String),
   `os` LowCardinality(String),
-  `device` LowCardinality(String),
+  `device_type` LowCardinality(String),
   `country` LowCardinality(FixedString(2)),
   `city` String CODEC(ZSTD(3)),
   `views` SimpleAggregateFunction(sum, UInt64),

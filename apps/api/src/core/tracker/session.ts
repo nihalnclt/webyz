@@ -1,10 +1,18 @@
+import { ClickHouseClient } from "@clickhouse/client";
+
 import { getSession, upsertSession } from "../../db/clickhouse.js";
-import { TrackingPayload } from "../../types/tracking.js";
+import {
+  EventData,
+  SessionData,
+  TrackingPayload,
+} from "../../types/tracking.js";
+import { toUnixSeconds } from "../../utils/time.js";
 
 export const updateSession = async (
-  clickhouse: any,
-  event: any,
+  clickhouse: ClickHouseClient,
+  event: EventData,
   payload: TrackingPayload,
+  uaInfo: any,
 ) => {
   const existingSession = await getSession(
     clickhouse,
@@ -14,38 +22,55 @@ export const updateSession = async (
 
   const isNewSession = payload.new_session === 1 || payload.new_session === "1";
 
+  // Convert event.timestamp to Unix seconds
+  const eventTimestamp = toUnixSeconds(event.timestamp);
+
   if (existingSession && !isNewSession) {
-    const sessionData = {
-      ...existingSession,
-      endTime: event.timestamp,
-      durationSeconds: Math.floor(
-        (event.timestamp.getTime() - existingSession.start_time.getTime()) /
-          1000,
-      ),
+    const sessionData: SessionData = {
+      sessionId: existingSession.session_id,
+      websiteId: existingSession.website_id,
+      userId: existingSession.user_id,
+      startTime: existingSession.start_time,
+      endTime: eventTimestamp,
+      durationSeconds: eventTimestamp - existingSession.start_time,
+      entryPage: existingSession.entry_page,
       exitPage: event.urlPath,
       pageViews: existingSession.page_views + 1,
       events: existingSession.events + 1,
+      hostname: existingSession.hostname,
+      browserFamily: existingSession.browser_family,
+      browserVersion: existingSession.browser_version,
+      osFamily: existingSession.os_family,
+      osVersion: existingSession.os_version,
+      deviceType: existingSession.device_type,
+      deviceBrand: existingSession.device_brand,
+      country: existingSession.country,
+      city: existingSession.city,
     };
 
     await upsertSession(clickhouse, sessionData);
   } else {
-    const sessionData = {
+    const sessionData: SessionData = {
       sessionId: event.sessionId,
       websiteId: event.websiteId,
       userId: event.userId,
-      startTime: event.timestamp,
-      endTime: event.timestamp,
-      duarationSeconds: 0,
+      startTime: eventTimestamp,
+      endTime: eventTimestamp,
+      durationSeconds: 0,
       entryPage: event.urlPath,
       exitPage: event.urlPath,
       pageViews: 1,
       events: 1,
       hostname: event.hostname,
-      browser: event.browser,
-      os: event.os,
-      device: event.device,
       country: event.country,
       city: event.city,
+
+      browserFamily: uaInfo.browserFamily,
+      browserVersion: uaInfo.browserVersion,
+      osFamily: uaInfo.osFamily,
+      osVersion: uaInfo.osVersion,
+      deviceType: uaInfo.deviceType,
+      deviceBrand: uaInfo.deviceBrand,
     };
 
     await upsertSession(clickhouse, sessionData);

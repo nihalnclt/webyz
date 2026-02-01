@@ -2,6 +2,7 @@ import { FastifyRequest } from "fastify";
 import { UAParser } from "ua-parser-js";
 
 import { ClientInfo } from "../types/tracking.js";
+import { normalizeBrowser, normalizeOS } from "./ua-normalizer.js";
 
 export const getClientIP = (request: FastifyRequest): string => {
   const forwarded = request.headers["x-forwarded-for"];
@@ -30,8 +31,25 @@ export const extractClientInfo = (request: FastifyRequest): ClientInfo => {
   return {
     ip,
     userAgent,
-    device: device.type || "desktop",
+    deviceType: device.type || "desktop",
     browser: `${browser.name || "unknown"} ${browser.version || ""}`.trim(),
     os: `${os.name || "unknown"} ${os.version || ""}`.trim(),
+  };
+};
+
+export const extractSessionClientInfo = (userAgent: string) => {
+  const parser = new UAParser(userAgent);
+
+  const browser = parser.getBrowser();
+  const os = parser.getOS();
+  const device = parser.getDevice();
+
+  return {
+    browserFamily: normalizeBrowser(browser.name),
+    browserVersion: browser.version || "Unknown",
+    osFamily: normalizeOS(os.name),
+    osVersion: os.version || "Unknown",
+    deviceType: device.type || "Desktop",
+    deviceBrand: device.vendor || "Unknown",
   };
 };

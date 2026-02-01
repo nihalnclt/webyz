@@ -7,7 +7,7 @@ SELECT
   hostname,
   browser,
   os,
-  device,
+  device_type,
   country,
   city,
   sumIf(1, event_type = 'pageview') AS views
@@ -18,6 +18,6 @@ GROUP BY
   hostname,
   browser,
   os,
-  device,
+  device_type,
   country,
   city;
