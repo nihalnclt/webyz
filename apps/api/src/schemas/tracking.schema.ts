@@ -18,7 +18,7 @@ export const trackingSchema = Type.Object(
     new_session: Type.Optional(Type.Union([Type.Literal(0), Type.Literal(1)])),
     name: Type.Optional(Type.String({ maxLength: 100 })),
   },
-  { additionalProperties: true }
+  { additionalProperties: true },
 );
 
 export type TrackingRequest = Static<typeof trackingSchema>;

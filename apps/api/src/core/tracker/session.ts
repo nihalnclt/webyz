@@ -1,26 +1,20 @@
 import { ClickHouseClient } from "@clickhouse/client";
 
-import { getSession, upsertSession } from "../../db/clickhouse.js";
-import {
-  EventData,
-  SessionData,
-  TrackingPayload,
-} from "../../types/tracking.js";
 import { toUnixSeconds } from "../../utils/time.js";
+import { EventData, SessionData, SessionUAInfo } from "./types.js";
+import { getSession, upsertSession } from "../../db/clickhouse/session.js";
 
 export const updateSession = async (
   clickhouse: ClickHouseClient,
   event: EventData,
-  payload: TrackingPayload,
-  uaInfo: any,
+  isNewSession: boolean,
+  uaInfo: SessionUAInfo,
 ) => {
   const existingSession = await getSession(
     clickhouse,
     event.websiteId,
     event.sessionId,
   );
-
-  const isNewSession = payload.new_session === 1 || payload.new_session === "1";
 
   // Convert event.timestamp to Unix seconds
   const eventTimestamp = toUnixSeconds(event.timestamp);

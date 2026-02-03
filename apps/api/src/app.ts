@@ -6,6 +6,8 @@ import fastifyAutoload from "@fastify/autoload";
 import fastifyStatic from "@fastify/static";
 import cors from "@fastify/cors";
 
+import { registerErrorHandler } from "./plugins/error-handler.js";
+
 export const options = {
   ajv: {
     customOptions: {
@@ -33,6 +35,8 @@ export default fp(async (fastify: FastifyInstance, opts) => {
     options: { ...opts },
   });
 
+  registerErrorHandler(fastify);
+
   // fastify.register(fastifyAutoload, {
   //   dir: path.join(import.meta.dirname, 'plugins/app'),
   //   options: { ...opts }
@@ -43,32 +47,6 @@ export default fp(async (fastify: FastifyInstance, opts) => {
     autoHooks: true,
     cascadeHooks: true,
     options: { prefix: "/api", ...opts },
-  });
-
-  console.log("CLICKHOUSE_HOST", process.env.CLICKHOUSE_HOST);
-
-  fastify.setErrorHandler((err: any, request, reply) => {
-    fastify.log.error(
-      {
-        err,
-        request: {
-          method: request.method,
-          url: request.url,
-          query: request.query,
-          params: request.params,
-        },
-      },
-      "Unhandled error occurred",
-    );
-
-    reply.code(err.statusCode ?? 500);
-
-    let message = "Internal Server Error";
-    if (err.statusCode && err.statusCode < 500) {
-      message = err.message;
-    }
-
-    return { message };
   });
 
   await fastify.register(rateLimit, {

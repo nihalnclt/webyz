@@ -6,9 +6,23 @@ import serviceApp from "./app.js";
 const app = Fastify({
   // logger: pino({ level: process.env.LOG_LEVEL }),
   logger: {
-    level: process.env.LOG_LEVEL,
+    level: process.env.LOG_LEVEL ?? "info",
     transport: {
-      target: "@fastify/one-line-logger",
+      targets: [
+        {
+          target: "@fastify/one-line-logger",
+          level: "info",
+        },
+        {
+          target: "pino-pretty",
+          level: "error",
+          options: {
+            colorize: true,
+            translateTime: "HH:MM:ss",
+            ignore: "pid,hostname",
+          },
+        },
+      ],
     },
   },
   ajv: {

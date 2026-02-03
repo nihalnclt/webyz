@@ -1,13 +1,12 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 
-import { TrackingPayload } from "../types/tracking.js";
-import { publishTracking } from "../core/tracker/publisher.js";
+import { TrackingPayload } from "../ingest/types.js";
+import { publishTracking } from "../ingest/http/publish-tracking.js";
 
 export const handleTrackerPost = async (
   request: FastifyRequest<{ Body: TrackingPayload }>,
   reply: FastifyReply,
 ) => {
-  console.log("request.body", request.body);
   await publishTracking(request.body, request);
   reply.code(204).send();
 };
