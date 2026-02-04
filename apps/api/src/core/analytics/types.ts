@@ -40,3 +40,13 @@ export type OsVersionsStatsInput = {
   page: number;
   detailed: boolean;
 };
+
+export type DeviceTypeStatsInput = {
+  websiteId: string;
+  from: number;
+  to: number;
+  limit: number;
+  page: number;
+  detailed: boolean;
+};
+

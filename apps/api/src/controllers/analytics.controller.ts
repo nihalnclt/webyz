@@ -8,6 +8,7 @@ import { getOsStats, getOsVersionsStats } from "../core/analytics/os.js";
 import { normalizePagination } from "../http/normalize/pagination.js";
 import { resolvePeriod } from "../http/normalize/period.js";
 import { sendResponse } from "../http/helper/send-response.js";
+import { getDeviceTypeStats } from "../core/analytics/device.js";
 
 export const getBrowsersStatsController = async (
   request: FastifyRequest,
@@ -145,6 +146,41 @@ export const getOsVersionsStatsController = async (
     from: range.from,
     to: range.to,
     os: query.os,
+    limit,
+    page,
+    detailed: query.detailed === "true",
+  });
+
+  return sendResponse(reply, data);
+};
+
+export const getDeviceTypeStatsController = async (
+  request: FastifyRequest,
+  reply: FastifyReply,
+) => {
+  const { siteId } = request.params as { siteId: string };
+  const query = request.query as {
+    period: string;
+    date: string;
+    from?: string;
+    to?: string;
+    limit?: number;
+    page?: number;
+    detailed?: string;
+  };
+
+  const { limit, page } = normalizePagination(query as any);
+  const range = resolvePeriod({
+    period: query.period,
+    date: query.date,
+    from: query.from,
+    to: query.to,
+  });
+
+  const data = await getDeviceTypeStats(request.ctx, {
+    websiteId: siteId,
+    from: range.from,
+    to: range.to,
     limit,
     page,
     detailed: query.detailed === "true",

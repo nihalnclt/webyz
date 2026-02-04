@@ -49,3 +49,10 @@ export type OSVersionsStatsRow = {
   visit_duration?: number;
   bounce_rate?: number;
 };
+
+export type DeviceTypeStatsRow = {
+  name: string;
+  visitors: number;
+  visit_duration?: number;
+  bounce_rate?: number;
+};
