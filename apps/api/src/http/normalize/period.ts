@@ -1,3 +1,5 @@
+import { invalidPeriod } from "../../core/errors/domain-errors.js";
+
 function startOfDay(date: Date) {
   const d = new Date(date);
   d.setUTCHours(0, 0, 0, 0);
@@ -80,7 +82,7 @@ export function resolvePeriod({
         to: Math.floor(addDays(new Date(to), 1).getTime() / 1000),
       };
     default:
-      throw new Error("Invalid period");
+      throw invalidPeriod(period);
   }
 
   return {

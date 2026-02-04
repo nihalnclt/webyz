@@ -22,11 +22,20 @@ export type BrowserVersionStats = {
   bounceRate?: number;
 };
 
-
 export type OsStatsInput = {
   websiteId: string;
   from: number;
   to: number;
+  limit: number;
+  page: number;
+  detailed: boolean;
+};
+
+export type OsVersionsStatsInput = {
+  websiteId: string;
+  from: number;
+  to: number;
+  os: string;
   limit: number;
   page: number;
   detailed: boolean;

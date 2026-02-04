@@ -101,10 +101,10 @@ export const browsersTotalsQuery = async (
 
 export const browserVersionStatsBasicQuery = async (
   clickhouse: ClickHouseClient,
-  browser: string,
+  websiteId: string,
   from: number,
   to: number,
-  websiteId: string,
+  browser: string,
   pagination: Pagination,
 ) => {
   const query = `
@@ -114,9 +114,9 @@ export const browserVersionStatsBasicQuery = async (
       count() AS visitors
     FROM sessions FINAL
     WHERE website_id = {websiteId:String}
-      AND browser_family = {browser:String}
       AND start_time <= fromUnixTimestamp({to:UInt32})
       AND end_time >=fromUnixTimestamp({from:UInt32}) 
+      AND browser_family = {browser:String}
     GROUP BY browser_family, browser_version
     ORDER BY visitors DESC
     LIMIT {limit:UInt32} OFFSET {offset:UInt32}
@@ -126,9 +126,9 @@ export const browserVersionStatsBasicQuery = async (
     query,
     query_params: {
       websiteId,
-      browser,
       from,
       to,
+      browser,
       limit: pagination.limit,
       offset: pagination.offset,
     },
@@ -140,10 +140,10 @@ export const browserVersionStatsBasicQuery = async (
 
 export const browserVersionStatsDetailedQuery = async (
   clickhouse: ClickHouseClient,
-  browser: string,
+  websiteId: string,
   from: number,
   to: number,
-  websiteId: string,
+  browser: string,
   pagination: Pagination,
 ) => {
   const query = `
@@ -155,9 +155,9 @@ export const browserVersionStatsDetailedQuery = async (
       sum(page_views = 1) / count() * 100 AS bounce_rate
     FROM sessions FINAL
     WHERE website_id = {websiteId:String}
-      AND browser_family = {browser:String}
       AND start_time <= fromUnixTimestamp({to:UInt32})
       AND end_time >=fromUnixTimestamp({from:UInt32}) 
+      AND browser_family = {browser:String}
     GROUP BY browser_family, browser_version
     ORDER BY visitors DESC
     LIMIT {limit:UInt32} OFFSET {offset:UInt32}
@@ -167,9 +167,9 @@ export const browserVersionStatsDetailedQuery = async (
     query,
     query_params: {
       websiteId,
-      browser,
       from,
       to,
+      browser,
       limit: pagination.limit,
       offset: pagination.offset,
     },
@@ -191,15 +191,15 @@ export const browserVersionsTotalsQuery = async (
       SELECT count() AS total
       FROM sessions FINAL
       WHERE website_id = {websiteId:String}
-        AND browser_family = {browser:String}
         AND start_time <= fromUnixTimestamp({to:UInt32})
         AND end_time >=fromUnixTimestamp({from:UInt32}) 
+        AND browser_family = {browser:String}
     `,
     query_params: {
       websiteId,
-      browser,
       from,
       to,
+      browser,
     },
   });
 

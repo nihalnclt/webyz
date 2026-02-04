@@ -4,7 +4,7 @@ import {
   getBrowsersStats,
   getBrowserVersionsStats,
 } from "../core/analytics/browsers.js";
-import { getOsStats } from "../core/analytics/os.js";
+import { getOsStats, getOsVersionsStats } from "../core/analytics/os.js";
 import { normalizePagination } from "../http/normalize/pagination.js";
 import { resolvePeriod } from "../http/normalize/period.js";
 import { sendResponse } from "../http/helper/send-response.js";
@@ -52,9 +52,9 @@ export const getBrowserVersionsStatsController = async (
   const query = request.query as {
     period: string;
     date: string;
-    browser: string;
     from?: string;
     to?: string;
+    browser: string;
     limit?: number;
     page?: number;
     detailed?: string;
@@ -108,6 +108,43 @@ export const getOsStatsController = async (
     websiteId: siteId,
     from: range.from,
     to: range.to,
+    limit,
+    page,
+    detailed: query.detailed === "true",
+  });
+
+  return sendResponse(reply, data);
+};
+
+export const getOsVersionsStatsController = async (
+  request: FastifyRequest,
+  reply: FastifyReply,
+) => {
+  const { siteId } = request.params as { siteId: string };
+  const query = request.query as {
+    period: string;
+    date: string;
+    from?: string;
+    to?: string;
+    os: string;
+    limit?: number;
+    page?: number;
+    detailed?: string;
+  };
+
+  const { limit, page } = normalizePagination(query as any);
+  const range = resolvePeriod({
+    period: query.period,
+    date: query.date,
+    from: query.from,
+    to: query.to,
+  });
+
+  const data = await getOsVersionsStats(request.ctx, {
+    websiteId: siteId,
+    from: range.from,
+    to: range.to,
+    os: query.os,
     limit,
     page,
     detailed: query.detailed === "true",
