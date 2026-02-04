@@ -50,3 +50,11 @@ export type DeviceTypeStatsInput = {
   detailed: boolean;
 };
 
+export type TopPagesStatsInput = {
+  websiteId: string;
+  from: number;
+  to: number;
+  limit: number;
+  page: number;
+  detailed: boolean;
+};

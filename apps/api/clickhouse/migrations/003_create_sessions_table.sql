@@ -20,6 +20,14 @@ CREATE TABLE webyz_analytics.sessions (
   `sub_division_1` LowCardinality(String),
   `sub_division_2` LowCardinality(String),
   `city` LowCardinality(String),
+  `channel` LowCardinality(String),
+  `utm_source` LowCardinality(String),
+  `utm_medium` LowCardinality(String),
+  `utm_campaign` LowCardinality(String),
+  `utm_campaign` LowCardinality(String),
+  `utm_content` LowCardinality(String);
+  `utm_term` LowCardinality(String);
+  `referrer_domain` LowCardinality(String);
   `updated_at` DateTime64(3, 'UTC')
 )
 ENGINE = ReplacingMergeTree(updated_at)

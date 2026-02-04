@@ -11,5 +11,5 @@ CREATE TABLE webyz_analytics.hourly_aggregates (
 )
 ENGINE = AggregatingMergeTree
 PARTITION BY toYYYYMM(hour)
-ORDER BY (website_id, hour, hostname, browser, os, device, country)
+ORDER BY (website_id, hour, hostname, browser, os, device_type, country)
 SETTINGS index_granularity = 8192;

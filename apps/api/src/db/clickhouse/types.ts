@@ -56,3 +56,11 @@ export type DeviceTypeStatsRow = {
   visit_duration?: number;
   bounce_rate?: number;
 };
+
+export type PagesStatsRows = {
+  page: string;
+  visitors: number;
+  pageviews: number;
+  time_on_page?: number;
+  bounce_rate?: number;
+};
