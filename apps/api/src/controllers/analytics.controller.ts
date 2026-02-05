@@ -14,6 +14,15 @@ import {
   getExitPagesStats,
   getTopPagesStats,
 } from "../core/analytics/page.js";
+import {
+  getChannelsStats,
+  getSourcesStats,
+  getUtmCampaignStats,
+  getUtmContentStats,
+  getUtmMediumStats,
+  getUtmSourceStats,
+  getUtmTermStats,
+} from "../core/analytics/utm.js";
 
 export const getBrowsersStatsController = async (
   request: FastifyRequest,
@@ -288,6 +297,251 @@ export const getExitPagesStatsController = async (
   });
 
   const data = await getExitPagesStats(request.ctx, {
+    websiteId: siteId,
+    from: range.from,
+    to: range.to,
+    limit,
+    page,
+    detailed: query.detailed === "true",
+  });
+
+  return sendResponse(reply, data);
+};
+
+export const getChannelsStatsController = async (
+  request: FastifyRequest,
+  reply: FastifyReply,
+) => {
+  const { siteId } = request.params as { siteId: string };
+  const query = request.query as {
+    period: string;
+    date: string;
+    from?: string;
+    to?: string;
+    limit?: number;
+    page?: number;
+    detailed?: string;
+  };
+
+  const { limit, page } = normalizePagination(query as any);
+  const range = resolvePeriod({
+    period: query.period,
+    date: query.date,
+    from: query.from,
+    to: query.to,
+  });
+
+  const data = await getChannelsStats(request.ctx, {
+    websiteId: siteId,
+    from: range.from,
+    to: range.to,
+    limit,
+    page,
+    detailed: query.detailed === "true",
+  });
+
+  return sendResponse(reply, data);
+};
+
+export const getSourcesStatsController = async (
+  request: FastifyRequest,
+  reply: FastifyReply,
+) => {
+  const { siteId } = request.params as { siteId: string };
+  const query = request.query as {
+    period: string;
+    date: string;
+    from?: string;
+    to?: string;
+    limit?: number;
+    page?: number;
+    detailed?: string;
+  };
+
+  const { limit, page } = normalizePagination(query as any);
+  const range = resolvePeriod({
+    period: query.period,
+    date: query.date,
+    from: query.from,
+    to: query.to,
+  });
+
+  const data = await getSourcesStats(request.ctx, {
+    websiteId: siteId,
+    from: range.from,
+    to: range.to,
+    limit,
+    page,
+    detailed: query.detailed === "true",
+  });
+
+  return sendResponse(reply, data);
+};
+
+export const getUtmMediumStatsController = async (
+  request: FastifyRequest,
+  reply: FastifyReply,
+) => {
+  const { siteId } = request.params as { siteId: string };
+  const query = request.query as {
+    period: string;
+    date: string;
+    from?: string;
+    to?: string;
+    limit?: number;
+    page?: number;
+    detailed?: string;
+  };
+
+  const { limit, page } = normalizePagination(query as any);
+  const range = resolvePeriod({
+    period: query.period,
+    date: query.date,
+    from: query.from,
+    to: query.to,
+  });
+
+  const data = await getUtmMediumStats(request.ctx, {
+    websiteId: siteId,
+    from: range.from,
+    to: range.to,
+    limit,
+    page,
+    detailed: query.detailed === "true",
+  });
+
+  return sendResponse(reply, data);
+};
+
+export const getUtmSourceStatsController = async (
+  request: FastifyRequest,
+  reply: FastifyReply,
+) => {
+  const { siteId } = request.params as { siteId: string };
+  const query = request.query as {
+    period: string;
+    date: string;
+    from?: string;
+    to?: string;
+    limit?: number;
+    page?: number;
+    detailed?: string;
+  };
+
+  const { limit, page } = normalizePagination(query as any);
+  const range = resolvePeriod({
+    period: query.period,
+    date: query.date,
+    from: query.from,
+    to: query.to,
+  });
+
+  const data = await getUtmSourceStats(request.ctx, {
+    websiteId: siteId,
+    from: range.from,
+    to: range.to,
+    limit,
+    page,
+    detailed: query.detailed === "true",
+  });
+
+  return sendResponse(reply, data);
+};
+
+export const getUtmCampaignStatsController = async (
+  request: FastifyRequest,
+  reply: FastifyReply,
+) => {
+  const { siteId } = request.params as { siteId: string };
+  const query = request.query as {
+    period: string;
+    date: string;
+    from?: string;
+    to?: string;
+    limit?: number;
+    page?: number;
+    detailed?: string;
+  };
+
+  const { limit, page } = normalizePagination(query as any);
+  const range = resolvePeriod({
+    period: query.period,
+    date: query.date,
+    from: query.from,
+    to: query.to,
+  });
+
+  const data = await getUtmCampaignStats(request.ctx, {
+    websiteId: siteId,
+    from: range.from,
+    to: range.to,
+    limit,
+    page,
+    detailed: query.detailed === "true",
+  });
+
+  return sendResponse(reply, data);
+};
+
+export const getUtmContentStatsController = async (
+  request: FastifyRequest,
+  reply: FastifyReply,
+) => {
+  const { siteId } = request.params as { siteId: string };
+  const query = request.query as {
+    period: string;
+    date: string;
+    from?: string;
+    to?: string;
+    limit?: number;
+    page?: number;
+    detailed?: string;
+  };
+
+  const { limit, page } = normalizePagination(query as any);
+  const range = resolvePeriod({
+    period: query.period,
+    date: query.date,
+    from: query.from,
+    to: query.to,
+  });
+
+  const data = await getUtmContentStats(request.ctx, {
+    websiteId: siteId,
+    from: range.from,
+    to: range.to,
+    limit,
+    page,
+    detailed: query.detailed === "true",
+  });
+
+  return sendResponse(reply, data);
+};
+
+export const getUtmTermStatsController = async (
+  request: FastifyRequest,
+  reply: FastifyReply,
+) => {
+  const { siteId } = request.params as { siteId: string };
+  const query = request.query as {
+    period: string;
+    date: string;
+    from?: string;
+    to?: string;
+    limit?: number;
+    page?: number;
+    detailed?: string;
+  };
+
+  const { limit, page } = normalizePagination(query as any);
+  const range = resolvePeriod({
+    period: query.period,
+    date: query.date,
+    from: query.from,
+    to: query.to,
+  });
+
+  const data = await getUtmTermStats(request.ctx, {
     websiteId: siteId,
     from: range.from,
     to: range.to,

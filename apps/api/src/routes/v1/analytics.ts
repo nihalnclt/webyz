@@ -9,6 +9,13 @@ import {
   getTopPagesStatsController,
   getEntryPagesStatsController,
   getExitPagesStatsController,
+  getChannelsStatsController,
+  getSourcesStatsController,
+  getUtmMediumStatsController,
+  getUtmSourceStatsController,
+  getUtmCampaignStatsController,
+  getUtmContentStatsController,
+  getUtmTermStatsController,
 } from "../../controllers/analytics.controller.js";
 
 export default async function trackerRoutes(fastify: FastifyInstance) {
@@ -20,4 +27,12 @@ export default async function trackerRoutes(fastify: FastifyInstance) {
   fastify.get("/:siteId/pages", getTopPagesStatsController);
   fastify.get("/:siteId/entry-pages", getEntryPagesStatsController);
   fastify.get("/:siteId/exit-pages", getExitPagesStatsController);
+
+  fastify.get("/:siteId/channel", getChannelsStatsController);
+  fastify.get("/:siteId/source", getSourcesStatsController);
+  fastify.get("/:siteId/utm-medium", getUtmMediumStatsController);
+  fastify.get("/:siteId/utm-source", getUtmSourceStatsController);
+  fastify.get("/:siteId/term-campaign", getUtmCampaignStatsController);
+  fastify.get("/:siteId/term-content", getUtmContentStatsController);
+  fastify.get("/:siteId/term-term", getUtmTermStatsController);
 }

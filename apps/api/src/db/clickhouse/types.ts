@@ -78,3 +78,53 @@ export type ExitPagesStatsRows = {
   visitors: number;
   exits: number;
 };
+
+export type ChannelsStatsRow = {
+  name: string;
+  visitors: number;
+  visit_duration?: number;
+  bounce_rate?: number;
+};
+
+export type SourceStatsRow = {
+  name: string;
+  visitors: number;
+  visit_duration?: number;
+  bounce_rate?: number;
+};
+
+export type UTMMediumStatsRow = {
+  name: string;
+  visitors: number;
+  visit_duration?: number;
+  bounce_rate?: number;
+};
+
+export type UTMSourceStatsRow = {
+  name: string;
+  visitors: number;
+  visit_duration?: number;
+  bounce_rate?: number;
+};
+
+export type UTMCampaignStatsRow = {
+  name: string;
+  visitors: number;
+  visit_duration?: number;
+  bounce_rate?: number;
+};
+
+export type UTMContentStatsRow = {
+  name: string;
+  visitors: number;
+  visit_duration?: number;
+  bounce_rate?: number;
+};
+
+
+export type UTMTermStatsRow = {
+  name: string;
+  visitors: number;
+  visit_duration?: number;
+  bounce_rate?: number;
+};

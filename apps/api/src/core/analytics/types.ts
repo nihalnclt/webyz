@@ -76,3 +76,12 @@ export type ExitPagesStatsInput = {
   page: number;
   detailed: boolean;
 };
+
+export type UTMStatsInput = {
+  websiteId: string;
+  from: number;
+  to: number;
+  limit: number;
+  page: number;
+  detailed: boolean;
+};
