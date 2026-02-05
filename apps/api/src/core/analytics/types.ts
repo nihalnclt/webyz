@@ -58,3 +58,21 @@ export type TopPagesStatsInput = {
   page: number;
   detailed: boolean;
 };
+
+export type EntryPagesStatsInput = {
+  websiteId: string;
+  from: number;
+  to: number;
+  limit: number;
+  page: number;
+  detailed: boolean;
+};
+
+export type ExitPagesStatsInput = {
+  websiteId: string;
+  from: number;
+  to: number;
+  limit: number;
+  page: number;
+  detailed: boolean;
+};

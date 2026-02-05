@@ -1,6 +1,10 @@
 import { ClickHouseClient } from "@clickhouse/client";
 import { Pagination } from "../../core/types/pagination.js";
-import { PagesStatsRows } from "./types.js";
+import {
+  EntryPagesStatsRows,
+  ExitPagesStatsRows,
+  TopPagesStatsRows,
+} from "./types.js";
 
 export const topPagesStatsBasicQuery = async (
   clickhouse: ClickHouseClient,
@@ -36,7 +40,7 @@ export const topPagesStatsBasicQuery = async (
     format: "JSONEachRow",
   });
 
-  return result.json<PagesStatsRows>();
+  return result.json<TopPagesStatsRows>();
 };
 
 export const topPagesStatsDetailedQuery = async (
@@ -87,7 +91,7 @@ export const topPagesStatsDetailedQuery = async (
     format: "JSONEachRow",
   });
 
-  return result.json<PagesStatsRows>();
+  return result.json<TopPagesStatsRows>();
 };
 
 export const topPagesTotalsQuery = async (
@@ -104,6 +108,202 @@ export const topPagesTotalsQuery = async (
         AND event_type = 'pageview'
         AND timestamp BETWEEN fromUnixTimestamp({from:UInt32})
                           AND fromUnixTimestamp({to:UInt32})
+    `,
+    query_params: {
+      websiteId,
+      from,
+      to,
+    },
+  });
+
+  const { data } = await result.json<{ total: string }>();
+  return data.length > 0 ? parseInt(data[0].total, 10) : 0;
+};
+
+export const entryPagesStatsBasicQuery = async (
+  clickhouse: ClickHouseClient,
+  websiteId: string,
+  from: number,
+  to: number,
+  pagination: Pagination,
+) => {
+  const query = `
+    SELECT
+      entry_page AS page,
+      count() AS visitors
+    FROM sessions
+    WHERE website_id = {websiteId:String}
+      AND start_time <= fromUnixTimestamp({to:UInt32})
+      AND end_time >=fromUnixTimestamp({from:UInt32})  
+    GROUP BY entry_page
+    ORDER BY visitors DESC
+    LIMIT {limit:UInt32} OFFSET {offset:UInt32}
+  `;
+
+  const result = await clickhouse.query({
+    query,
+    query_params: {
+      websiteId,
+      from,
+      to,
+      limit: pagination.limit,
+      offset: pagination.offset,
+    },
+    format: "JSONEachRow",
+  });
+
+  return result.json<EntryPagesStatsRows>();
+};
+
+export const entryPagesStatsDetailedQuery = async (
+  clickhouse: ClickHouseClient,
+  websiteId: string,
+  from: number,
+  to: number,
+  pagination: Pagination,
+) => {
+  const query = `
+    SELECT
+      entry_page AS page,
+      count(user_id) AS visitors,
+      avg(duration_seconds) AS visit_duration,
+      sum(page_views = 1) / count() * 100 AS bounce_rate,
+      count() AS entrances
+    FROM sessions
+    WHERE website_id = {websiteId:String}
+      AND start_time <= fromUnixTimestamp({to:UInt32})
+      AND end_time >=fromUnixTimestamp({from:UInt32})  
+    GROUP BY entry_page
+    ORDER BY visitors DESC
+    LIMIT {limit:UInt32} OFFSET {offset:UInt32}
+  `;
+
+  const result = await clickhouse.query({
+    query,
+    query_params: {
+      websiteId,
+      from,
+      to,
+      limit: pagination.limit,
+      offset: pagination.offset,
+    },
+    format: "JSONEachRow",
+  });
+
+  return result.json<EntryPagesStatsRows>();
+};
+
+export const entryPagesTotalsQuery = async (
+  clickhouse: ClickHouseClient,
+  websiteId: string,
+  from: number,
+  to: number,
+) => {
+  const result = await clickhouse.query({
+    query: `
+      SELECT count() AS total
+      FROM sessions FINAL
+      WHERE website_id = {websiteId:String}
+        AND start_time <= fromUnixTimestamp({to:UInt32})
+        AND end_time >=fromUnixTimestamp({from:UInt32}) 
+        AND browser_family = {browser:String}
+    `,
+    query_params: {
+      websiteId,
+      from,
+      to,
+    },
+  });
+
+  const { data } = await result.json<{ total: string }>();
+  return data.length > 0 ? parseInt(data[0].total, 10) : 0;
+};
+
+export const exitPagesStatsBasicQuery = async (
+  clickhouse: ClickHouseClient,
+  websiteId: string,
+  from: number,
+  to: number,
+  pagination: Pagination,
+) => {
+  const query = `
+    SELECT
+      exit_page AS page,
+      count() AS visitors
+    FROM sessions
+    WHERE website_id = {websiteId:String}
+      AND start_time <= fromUnixTimestamp({to:UInt32})
+      AND end_time >=fromUnixTimestamp({from:UInt32})  
+    GROUP BY exit_page
+    ORDER BY visitors DESC
+    LIMIT {limit:UInt32} OFFSET {offset:UInt32}
+  `;
+
+  const result = await clickhouse.query({
+    query,
+    query_params: {
+      websiteId,
+      from,
+      to,
+      limit: pagination.limit,
+      offset: pagination.offset,
+    },
+    format: "JSONEachRow",
+  });
+
+  return result.json<ExitPagesStatsRows>();
+};
+
+export const exitPagesStatsDetailedQuery = async (
+  clickhouse: ClickHouseClient,
+  websiteId: string,
+  from: number,
+  to: number,
+  pagination: Pagination,
+) => {
+  const query = `
+    SELECT
+      exit_page AS page,
+      countDistinct(user_id) AS visitors,
+      count() AS exits
+    FROM sessions
+    WHERE website_id = {websiteId:String}
+      AND start_time <= fromUnixTimestamp({to:UInt32})
+      AND end_time >=fromUnixTimestamp({from:UInt32})  
+    GROUP BY exit_page
+    ORDER BY visitors DESC
+    LIMIT {limit:UInt32} OFFSET {offset:UInt32}
+  `;
+
+  const result = await clickhouse.query({
+    query,
+    query_params: {
+      websiteId,
+      from,
+      to,
+      limit: pagination.limit,
+      offset: pagination.offset,
+    },
+    format: "JSONEachRow",
+  });
+
+  return result.json<ExitPagesStatsRows>();
+};
+
+export const exitPagesTotalsQuery = async (
+  clickhouse: ClickHouseClient,
+  websiteId: string,
+  from: number,
+  to: number,
+) => {
+  const result = await clickhouse.query({
+    query: `
+      SELECT count() AS total
+      FROM sessions FINAL
+      WHERE website_id = {websiteId:String}
+        AND start_time <= fromUnixTimestamp({to:UInt32})
+        AND end_time >=fromUnixTimestamp({from:UInt32}) 
+        AND browser_family = {browser:String}
     `,
     query_params: {
       websiteId,

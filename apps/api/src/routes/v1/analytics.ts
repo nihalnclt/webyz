@@ -7,6 +7,8 @@ import {
   getOsStatsController,
   getOsVersionsStatsController,
   getTopPagesStatsController,
+  getEntryPagesStatsController,
+  getExitPagesStatsController,
 } from "../../controllers/analytics.controller.js";
 
 export default async function trackerRoutes(fastify: FastifyInstance) {
@@ -16,4 +18,6 @@ export default async function trackerRoutes(fastify: FastifyInstance) {
   fastify.get("/:siteId/os-versions", getOsVersionsStatsController);
   fastify.get("/:siteId/device-types", getDeviceTypeStatsController);
   fastify.get("/:siteId/pages", getTopPagesStatsController);
+  fastify.get("/:siteId/entry-pages", getEntryPagesStatsController);
+  fastify.get("/:siteId/exit-pages", getExitPagesStatsController);
 }

@@ -24,7 +24,6 @@ CREATE TABLE webyz_analytics.sessions (
   `utm_source` LowCardinality(String),
   `utm_medium` LowCardinality(String),
   `utm_campaign` LowCardinality(String),
-  `utm_campaign` LowCardinality(String),
   `utm_content` LowCardinality(String);
   `utm_term` LowCardinality(String);
   `referrer_domain` LowCardinality(String);

@@ -57,10 +57,24 @@ export type DeviceTypeStatsRow = {
   bounce_rate?: number;
 };
 
-export type PagesStatsRows = {
+export type TopPagesStatsRows = {
   page: string;
   visitors: number;
   pageviews: number;
   time_on_page?: number;
   bounce_rate?: number;
+};
+
+export type EntryPagesStatsRows = {
+  page: string;
+  visitors: number;
+  visit_duration?: number;
+  bounce_rate?: number;
+  entrances?: number;
+};
+
+export type ExitPagesStatsRows = {
+  page: string;
+  visitors: number;
+  exits: number;
 };
