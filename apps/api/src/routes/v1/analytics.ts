@@ -16,6 +16,7 @@ import {
   getUtmCampaignStatsController,
   getUtmContentStatsController,
   getUtmTermStatsController,
+  getTopStatsController,
 } from "../../controllers/analytics.controller.js";
 
 export default async function trackerRoutes(fastify: FastifyInstance) {
@@ -35,4 +36,6 @@ export default async function trackerRoutes(fastify: FastifyInstance) {
   fastify.get("/:siteId/term-campaign", getUtmCampaignStatsController);
   fastify.get("/:siteId/term-content", getUtmContentStatsController);
   fastify.get("/:siteId/term-term", getUtmTermStatsController);
+
+  fastify.get("/:siteId/top-stats", getTopStatsController);
 }

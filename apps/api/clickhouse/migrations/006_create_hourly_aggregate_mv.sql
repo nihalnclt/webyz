@@ -3,21 +3,13 @@ TO webyz_analytics.hourly_aggregates
 AS
 SELECT
   website_id,
-  toStartOfHour(timestamp) AS hour,
-  hostname,
-  browser,
-  os,
-  device_type,
-  country,
-  city,
-  sumIf(1, event_type = 'pageview') AS views
-FROM webyz_analytics.events
-GROUP BY
-  website_id,
-  hour,
-  hostname,
-  browser,
-  os,
-  device_type,
-  country,
-  city;
+  toStartOfHour(start_time) as hour,
+
+  count() as visits,
+  sum(page_views) as pageviews,
+  sumIf(1, page_views = 1) as bounces,
+  sum(duration_seconds) as total_duration,
+
+  uniqState(user_id) as visitors
+FROM webyz_analytics.sessions
+GROUP BY website_id, hour;

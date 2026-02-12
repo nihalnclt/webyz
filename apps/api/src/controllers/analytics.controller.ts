@@ -23,6 +23,7 @@ import {
   getUtmSourceStats,
   getUtmTermStats,
 } from "../core/analytics/utm.js";
+import { getTopStats } from "../core/analytics/top-stats.js";
 
 export const getBrowsersStatsController = async (
   request: FastifyRequest,
@@ -551,4 +552,46 @@ export const getUtmTermStatsController = async (
   });
 
   return sendResponse(reply, data);
+};
+
+export const getTopStatsController = async (
+  request: FastifyRequest,
+  reply: FastifyReply,
+) => {
+  const { siteId } = request.params as { siteId: string };
+  const query = request.query as {
+    period: string;
+    date: string;
+    from?: string;
+    to?: string;
+  };
+
+  const range = resolvePeriod({
+    period: query.period,
+    date: query.date,
+    from: query.from,
+    to: query.to,
+  });
+
+  const diff = range.to - range.from;
+  const compareRange = {
+    from: range.from - diff,
+    to: range.to - diff,
+  };
+
+  const stats = await getTopStats(request.ctx, {
+    websiteId: siteId,
+    from: range.from,
+    to: range.to,
+    compareFrom: compareRange.from,
+    compareTo: compareRange.to,
+  });
+
+  return sendResponse(reply, {
+    from: range.from,
+    to: range.to,
+    comparing_from: compareRange.from,
+    comparing_to: compareRange.to,
+    top_stats: stats,
+  });
 };

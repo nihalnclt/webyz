@@ -121,10 +121,22 @@ export type UTMContentStatsRow = {
   bounce_rate?: number;
 };
 
-
 export type UTMTermStatsRow = {
   name: string;
   visitors: number;
   visit_duration?: number;
   bounce_rate?: number;
+};
+
+export type TopStatsRow = {
+  visitors: number;
+  prev_visitors: number;
+  visits: number;
+  prev_visits: number;
+  pageviews: number;
+  prev_pageviews: number;
+  visit_duration: number;
+  prev_visit_duration: number;
+  bounces: number;
+  prev_bounces: number;
 };

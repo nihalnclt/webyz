@@ -85,3 +85,11 @@ export type UTMStatsInput = {
   page: number;
   detailed: boolean;
 };
+
+export type TopStatsInput = {
+  websiteId: string;
+  from: number;
+  to: number;
+  compareFrom: number;
+  compareTo: number;
+};
