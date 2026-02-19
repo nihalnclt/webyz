@@ -5,6 +5,7 @@ import Fastify from "fastify";
 import closeWithGrace from "close-with-grace";
 
 import serviceApp from "./app.js";
+import { PORT } from "./config/env.js";
 
 const app = Fastify({
   // logger: pino({ level: process.env.LOG_LEVEL }),
@@ -51,8 +52,7 @@ const startServer = async () => {
   await app.ready();
 
   try {
-    // process.env.PORT ?? 3000
-    await app.listen({ port: 3000 });
+    await app.listen({ port: PORT });
   } catch (err) {
     app.log.error(err);
     process.exit(1);

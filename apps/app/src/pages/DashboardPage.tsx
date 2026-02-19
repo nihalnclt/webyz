@@ -1,26 +1,26 @@
-"use client";
 import {
-  MdBarChart,
-  MdDownload,
-  MdOutlineDarkMode,
-  MdOutlineLanguage,
-  MdOutlineMoreVert,
-  MdOutlineTrendingUp,
-} from "react-icons/md";
-import LineChart from "../LineChart";
-import Image from "next/image";
+  BarChart,
+  Download,
+  Moon,
+  Globe,
+  MoreVertical,
+  TrendingUp,
+} from "lucide-react";
 
-export default function DemoPage() {
+import LineChart from "../features/dashboard/components/LineChart";
+import ContentSection from "../features/dashboard/components/content/ContentSection";
+
+export default function DashboardPage() {
   return (
     <div>
       <div className="w-[1120px] max-w-[100%] mx-auto py-5 flex items-center justify-between">
         <h1 className="font-[600] text-xl">WEBYZ</h1>
         <div className="flex items-center gap-6">
           <button className="text-[22px]">
-            <MdOutlineLanguage />
+            <Globe />
           </button>
           <button className="text-[22px]">
-            <MdOutlineDarkMode />
+            <Moon />
           </button>
           <div className="flex items-center gap-3">
             <div className="w-[40px] h-[40px] rounded-full overflow-hidden bg-[#f1f1f1]">
@@ -51,7 +51,7 @@ export default function DemoPage() {
           </div>
           <div className="flex items-center gap-4">
             <button>
-              <MdDownload />
+              <Download />
             </button>
             <button>Filters</button>
             <select name="" id="">
@@ -59,7 +59,7 @@ export default function DemoPage() {
               <option value="">Yesterday</option>
             </select>
             <button>
-              <MdOutlineMoreVert />
+              <MoreVertical />
             </button>
           </div>
         </div>
@@ -76,7 +76,7 @@ export default function DemoPage() {
                   <div className="flex items-center justify-between">
                     <span>18</span>
                     <div className="flex items-center gap-2 text-green-500 text-sm">
-                      <MdOutlineTrendingUp />
+                      <TrendingUp />
                       <span>10%</span>
                     </div>
                   </div>
@@ -90,7 +90,7 @@ export default function DemoPage() {
           <div className="col-span-4">
             <div className="flex items-center gap-4 justify-end">
               <button>
-                <MdBarChart />
+                <BarChart />
               </button>
               <select name="" id="">
                 <option value="">Hour</option>
@@ -159,8 +159,8 @@ export default function DemoPage() {
           </div>
         </div>
 
-        {/* TOP SOURCES */}
         <div className="mt-5 grid grid-cols-2">
+          <ContentSection />
           <div className="pr-5 border-r">
             <h2>Top Pages</h2>
             <div className="flex items-center gap-4">
@@ -171,7 +171,10 @@ export default function DemoPage() {
             <div className="flex flex-col gap-3 w-full">
               {Array.from({ length: 10 }).map((_, index) => {
                 return (
-                  <div key={index} className={"flex items-center gap-4 justify-between"}>
+                  <div
+                    key={index}
+                    className={"flex items-center gap-4 justify-between"}
+                  >
                     <div className="flex-1">
                       <span>/Dashboard</span>
                     </div>
@@ -196,7 +199,10 @@ export default function DemoPage() {
             <div className="flex flex-col gap-3 w-full">
               {Array.from({ length: 10 }).map((_, index) => {
                 return (
-                  <div key={index} className={"flex items-center gap-4 justify-between"}>
+                  <div
+                    key={index}
+                    className={"flex items-center gap-4 justify-between"}
+                  >
                     <div className="flex-1">
                       <span>Google</span>
                     </div>

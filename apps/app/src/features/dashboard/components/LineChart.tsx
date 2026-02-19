@@ -1,18 +1,24 @@
-"use client";
 import { Line } from "react-chartjs-2";
-
 import {
   Chart as ChartJS,
   LineElement,
-  CategoryScale, // x axis
-  LinearScale, // y axis
+  CategoryScale,
+  LinearScale,
   PointElement,
   Legend,
   Tooltip,
   Filler,
 } from "chart.js";
 
-ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement, Legend, Tooltip, Filler);
+ChartJS.register(
+  LineElement,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  Legend,
+  Tooltip,
+  Filler,
+);
 
 const salesData = [
   { month: "January", sales: 100 },
@@ -115,7 +121,7 @@ function LineChart() {
         },
         ticks: {
           stepSize: 2,
-          callback: (value: any) => value + "k"
+          callback: (value: any) => value + "k",
         },
         // ticks: {
         //   font: {
