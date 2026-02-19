@@ -1,7 +1,6 @@
-import { EventInput } from "../../core/tracker/types.js";
+import { normalizeGeo } from "../../core/geo/index.js";
 import { isBot } from "../../utils/bot-detection.js";
 import { extractHostname } from "../../utils/hostname.js";
-import { normalizeGeo } from "../helpers/geo.js";
 import { normalizeMeta } from "../helpers/meta.js";
 import { normalizeUrlData } from "../helpers/url.js";
 import { normalizeUtm } from "../helpers/utm.js";

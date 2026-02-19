@@ -14,7 +14,7 @@ datasource db {
 }
 
 model User {
-  id          BigInt   @id @default(autoincrement())
+  id          String   @id @default(uuid())
   displayName String   @map("display_name") @db.Text
   email       String   @unique @db.Text
   password    String?  @db.Text
@@ -24,4 +24,15 @@ model User {
   updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   @@map("users")
+}
+
+model Website {
+  id        String   @id @default(uuid())
+  name      String
+  domain    String   @unique
+  timezone  String   @default("UTC")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@map("websites")
 }

@@ -1,3 +1,4 @@
+import { toDate, toZonedTime } from "date-fns-tz";
 import { invalidPeriod } from "../../core/errors/domain-errors.js";
 
 function startOfDay(date: Date) {
@@ -17,13 +18,17 @@ export function resolvePeriod({
   date,
   from,
   to,
+  timezone = "UTC",
 }: {
   period: string;
   date?: string;
   from?: string;
   to?: string;
+  timezone?: string;
 }) {
-  const baseDate = date ? new Date(`${date}T00:00:00Z`) : new Date();
+  const baseDate = date
+    ? toZonedTime(new Date(`${date}T00:00:00`), timezone)
+    : toZonedTime(new Date(), timezone);
   const today = startOfDay(baseDate);
   const tomorrow = addDays(today, 1);
 
@@ -86,7 +91,7 @@ export function resolvePeriod({
   }
 
   return {
-    from: Math.floor(start.getTime() / 1000),
-    to: Math.floor(end.getTime() / 1000),
+    from: Math.floor(toDate(start, { timeZone: timezone }).getTime() / 1000),
+    to: Math.floor(toDate(end, { timeZone: timezone }).getTime() / 1000),
   };
 }

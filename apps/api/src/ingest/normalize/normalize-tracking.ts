@@ -4,12 +4,11 @@ import { TrackingPayload } from "../types.js";
 import { extractClientInfoFromRequest } from "../http/extract-client-info.js";
 import { extractHostname } from "../../utils/hostname.js";
 import { isBot } from "../../utils/bot-detection.js";
-import { EventInput } from "../../core/tracker/types.js";
 import { normalizeUtm } from "../helpers/utm.js";
-import { normalizeGeo } from "../helpers/geo.js";
 import { normalizeMeta } from "../helpers/meta.js";
 import { normalizeUrlData } from "../helpers/url.js";
 import { parseUserAgent } from "../user-agent/parse-user-agent.js";
+import { normalizeGeo } from "../../core/geo/index.js";
 
 export const normalizeTracking = async (
   payload: TrackingPayload,

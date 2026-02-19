@@ -24,6 +24,7 @@ import {
   getUtmTermStats,
 } from "../core/analytics/utm.js";
 import { getTopStats } from "../core/analytics/top-stats.js";
+import { getMainGraph } from "../core/analytics/main-graph.js";
 
 export const getBrowsersStatsController = async (
   request: FastifyRequest,
@@ -594,4 +595,39 @@ export const getTopStatsController = async (
     comparing_to: compareRange.to,
     top_stats: stats,
   });
+};
+
+export const getMainGraphController = async (
+  request: FastifyRequest,
+  reply: FastifyReply,
+) => {
+  const { siteId } = request.params as { siteId: string };
+  const query = request.query as {
+    period: string;
+    date: string;
+    from?: string;
+    to?: string;
+    metric: string;
+    interval: "minute" | "hour" | "day" | "week" | "month";
+  };
+
+  const range = resolvePeriod({
+    period: query.period,
+    date: query.date,
+    from: query.from,
+    to: query.to,
+    timezone: "Asia/Kolkata",
+  });
+
+  console.log(range.from, range.to);
+
+  const data = await getMainGraph(request.ctx, {
+    websiteId: siteId,
+    from: range.from,
+    to: range.to,
+    metric: query.metric || "visits",
+    interval: query.interval || "hour",
+  });
+
+  return sendResponse(reply, data);
 };
