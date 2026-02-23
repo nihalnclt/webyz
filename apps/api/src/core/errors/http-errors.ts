@@ -18,3 +18,9 @@ export const notFound = (message = "Not found") =>
     code: "NOT_FOUND",
     statusCode: 404,
   });
+
+export const conflict = (message = "Conflict") =>
+  createAppError(message, {
+    code: "CONFLICT",
+    statusCode: 409,
+  });

@@ -1,7 +1,5 @@
-import { ClickHouseClient } from "@clickhouse/client";
-
 import { AppContext } from "../context.js";
-import { BrowserStatsInput } from "./types.js";
+import { BrowserStatsInput, BrowserVersionStatsInput } from "./types.js";
 import { calculatePercentage } from "./helpers.js";
 import {
   browserStatsBasicQuery,
@@ -62,15 +60,7 @@ export const getBrowsersStats = async (
 
 export const getBrowserVersionsStats = async (
   { clickhouse }: AppContext,
-  input: {
-    websiteId: string;
-    from: number;
-    to: number;
-    browser: string;
-    limit: number;
-    page: number;
-    detailed: boolean;
-  },
+  input: BrowserVersionStatsInput,
 ) => {
   const offset = (input.page - 1) * input.limit;
   const pagination = { limit: input.limit, offset };

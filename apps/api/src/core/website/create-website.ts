@@ -6,6 +6,7 @@ interface CreateWebsiteInput {
   domain: string;
   timezone: string;
 }
+
 export const createWebsite = async (
   { prisma, clickhouse }: AppContext,
   input: CreateWebsiteInput,

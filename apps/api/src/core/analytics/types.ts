@@ -7,6 +7,16 @@ export type BrowserStatsInput = {
   detailed: boolean;
 };
 
+export type BrowserVersionStatsInput = {
+  websiteId: string;
+  from: number;
+  to: number;
+  browser: string;
+  limit: number;
+  page: number;
+  detailed: boolean;
+};
+
 export type BrowserStats = {
   name: string;
   visitors: number;

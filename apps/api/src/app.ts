@@ -5,6 +5,7 @@ import fp from "fastify-plugin";
 import fastifyAutoload from "@fastify/autoload";
 import fastifyStatic from "@fastify/static";
 import cors from "@fastify/cors";
+import cookie from "@fastify/cookie";
 
 import { registerErrorHandler } from "./plugins/error-handler.js";
 
@@ -18,6 +19,8 @@ export const options = {
 };
 
 export default fp(async (fastify: FastifyInstance, opts) => {
+  fastify.register(cookie);
+
   fastify.register(fastifyStatic, {
     root: path.join(process.cwd(), "/public"),
     prefix: "/",
