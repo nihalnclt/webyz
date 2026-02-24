@@ -1,6 +1,3 @@
-import dotenv from "dotenv";
-dotenv.config();
-
 import Fastify from "fastify";
 import closeWithGrace from "close-with-grace";
 

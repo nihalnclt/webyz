@@ -3,7 +3,7 @@ import {
   changePassBodySchema,
   loginUserBodySchema,
   logoutQuerySchema,
-  registerUserBodySchema,
+  signupUserBodySchema,
 } from "../../schemas/user-auth.schema.js";
 import {
   changePasswordController,
@@ -13,52 +13,52 @@ import {
   loginController,
   logoutController,
   meController,
-  registerController,
   revokeOtherSessionsController,
   revokeSessionController,
+  signupController,
 } from "../../controllers/user-auth.controller.js";
 import { authenticate } from "../../middlewares/auth.middleware.js";
 
-export async function authRoutes(fastify: FastifyInstance) {
+export default async function authRoutes(fastify: FastifyInstance) {
   fastify.post(
-    "/register",
-    { schema: { body: registerUserBodySchema } },
-    registerController,
+    "/users/auth/signup",
+    { schema: { body: signupUserBodySchema } },
+    signupController,
   );
   fastify.post(
-    "/login",
+    "/users/auth/login",
     { schema: { body: loginUserBodySchema } },
     loginController,
   );
 
-  fastify.get("/google", googleAuthController);
-  fastify.get("/google/callback", googleCallbackController);
+  fastify.get("/users/auth/google", googleAuthController);
+  fastify.get("/users/auth/google/callback", googleCallbackController);
 
-  fastify.get("/me", { preHandler: [authenticate] }, meController);
+  fastify.get("/users/auth/me", { preHandler: [authenticate] }, meController);
   fastify.post(
-    "/logout",
+    "/users/auth/logout",
     { preHandler: [authenticate], schema: { querystring: logoutQuerySchema } },
     logoutController,
   );
 
   fastify.get(
-    "/sessions",
+    "/users/auth/sessions",
     { preHandler: [authenticate] },
     listSessionsController,
   );
   fastify.delete(
-    "/sessions",
+    "/users/auth/sessions",
     { preHandler: [authenticate] },
     revokeOtherSessionsController,
   );
   fastify.delete<{ Params: { sessionId: string } }>(
-    "/sessions/:sessionId",
+    "/users/auth/sessions/:sessionId",
     { preHandler: [authenticate] },
     revokeSessionController,
   );
 
   fastify.post(
-    "/password",
+    "/users/auth/password",
     {
       preHandler: [authenticate as any],
       schema: { body: changePassBodySchema },

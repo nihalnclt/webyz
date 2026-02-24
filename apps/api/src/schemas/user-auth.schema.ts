@@ -1,4 +1,4 @@
-export const registerUserBodySchema = {
+export const signupUserBodySchema = {
   type: "object",
   properties: {
     email: { type: "string", format: "email" },

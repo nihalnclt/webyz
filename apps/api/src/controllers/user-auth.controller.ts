@@ -33,10 +33,14 @@ import {
 } from "../core/auth/google.js";
 import { FRONTEND_URL } from "../config/env.js";
 
-export async function registerController(
+export async function signupController(
   request: FastifyRequest<{ Body: RegisterUserInput }>,
   reply: FastifyReply,
 ) {
+  console.log("signup");
+  console.log("signup 1", await request.ctx?.prisma?.user?.count());
+  console.log("signup 2");
+
   const user = await registerUser(request.ctx, request.body);
   const session = await createSession(
     request.ctx,

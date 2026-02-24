@@ -13,8 +13,8 @@ import ContentSection from "../features/dashboard/components/content/ContentSect
 export default function DashboardPage() {
   return (
     <div>
-      <div className="w-[1120px] max-w-[100%] mx-auto py-5 flex items-center justify-between">
-        <h1 className="font-[600] text-xl">WEBYZ</h1>
+      <div className="w-280 max-w-full mx-auto py-5 flex items-center justify-between">
+        <h1 className="font-semibold text-xl">WEBYZ</h1>
         <div className="flex items-center gap-6">
           <button className="text-[22px]">
             <Globe />
@@ -23,7 +23,7 @@ export default function DashboardPage() {
             <Moon />
           </button>
           <div className="flex items-center gap-3">
-            <div className="w-[40px] h-[40px] rounded-full overflow-hidden bg-[#f1f1f1]">
+            <div className="w-10 h-10 rounded-full overflow-hidden bg-[#f1f1f1]">
               <img
                 src="https://newprofilepic.photo-cdn.net//assets/images/article/profile.jpg?90af0c8"
                 alt=""
@@ -39,13 +39,13 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <div className="bg-[#fff] sticky top-0">
-        <div className="w-[1120px] max-w-[100%] mx-auto flex items-center justify-between py-4">
+      <div className="bg-white sticky top-0">
+        <div className="w-280 max-w-full mx-auto flex items-center justify-between py-4">
           <div className="flex items-center gap-3">
             <img
               src="https://www.svgrepo.com/show/373632/go.svg"
               alt=""
-              className="w-[20px] h-[20px] object-cover"
+              className="w-5 h-5 object-cover"
             />
             <span>webyz.io</span>
           </div>
@@ -65,7 +65,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <div className="w-[1120px] max-w-[100%] mx-auto">
+      <div className="w-280 max-w-full mx-auto">
         <div className="grid grid-cols-6 gap-3 border-t border-b py-4">
           {Array.from({ length: 6 }).map((_, index) => {
             return (
@@ -86,7 +86,7 @@ export default function DashboardPage() {
           })}
         </div>
 
-        <div className="mt-5 grid grid-cols-5 w-full h-[500px]">
+        <div className="mt-5 grid grid-cols-5 w-full h-125">
           <div className="col-span-4">
             <div className="flex items-center gap-4 justify-end">
               <button>
@@ -107,12 +107,12 @@ export default function DashboardPage() {
                   <img
                     src="https://cdn.iconscout.com/icon/free/png-256/free-windows-221-1175066.png"
                     alt=""
-                    className="w-[20px] h-[20px] object-cover"
+                    className="w-5 h-5 object-cover"
                   />
                   <span className="block">Windows 11</span>
                 </div>
               </div>
-              <span className="text-lg font-[500]">21K</span>
+              <span className="text-lg font-medium">21K</span>
             </div>
             <div className="py-4 border-b flex items-center gap-4 justify-between">
               <div className="">
@@ -121,12 +121,12 @@ export default function DashboardPage() {
                   <img
                     src="https://cdn-icons-png.flaticon.com/512/3381/3381949.png"
                     alt=""
-                    className="w-[20px] h-[20px] object-cover"
+                    className="w-5 h-5 object-cover"
                   />
                   <span className="block">Desktop</span>
                 </div>
               </div>
-              <span className="text-lg font-[500]">21K</span>
+              <span className="text-lg font-medium">21K</span>
             </div>
             <div className="py-4 border-b flex items-center gap-4 justify-between">
               <div>
@@ -135,12 +135,12 @@ export default function DashboardPage() {
                   <img
                     src="https://upload.wikimedia.org/wikipedia/commons/8/87/Google_Chrome_icon_%282011%29.png"
                     alt=""
-                    className="w-[20px] h-[20px] object-cover"
+                    className="w-5 h-5 object-cover"
                   />
                   <span className="block">Chrome</span>
                 </div>
               </div>
-              <span className="text-lg font-[500]">21K</span>
+              <span className="text-lg font-medium">21K</span>
             </div>
             <div className="py-4 flex items-center gap-4 justify-between">
               <div>
@@ -149,12 +149,12 @@ export default function DashboardPage() {
                   <img
                     src="https://upload.wikimedia.org/wikipedia/en/thumb/4/41/Flag_of_India.svg/255px-Flag_of_India.svg.png"
                     alt=""
-                    className="w-[20px] h-[20px] object-cover"
+                    className="w-5 h-5 object-cover"
                   />
                   <span className="block">India</span>
                 </div>
               </div>
-              <span className="text-lg font-[500]">21K</span>
+              <span className="text-lg font-medium">21K</span>
             </div>
           </div>
         </div>
@@ -179,7 +179,7 @@ export default function DashboardPage() {
                       <span>/Dashboard</span>
                     </div>
                     <span>12k</span>
-                    <div className="w-[50px] h-[4px] bg-red-500 rounded-full">
+                    <div className="w-12.5 h-1 bg-red-500 rounded-full">
                       <span className=""></span>
                     </div>
                     {/* <span>{(10 - index) * 8}%</span> */}
@@ -207,7 +207,7 @@ export default function DashboardPage() {
                       <span>Google</span>
                     </div>
                     <span>12k</span>
-                    <div className="w-[50px] h-[4px] bg-red-500 rounded-full">
+                    <div className="w-12.5 h-1 bg-red-500 rounded-full">
                       <span className=""></span>
                     </div>
                   </div>

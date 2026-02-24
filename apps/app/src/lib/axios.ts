@@ -1,7 +1,9 @@
 import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios";
 
+export const API_PREFIX = "/api/v1";
+
 export const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL ?? "",
+  baseURL: (import.meta.env.VITE_API_BASE_URL ?? "") + API_PREFIX,
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",

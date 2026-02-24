@@ -27,10 +27,9 @@ export default fp(async (fastify: FastifyInstance, opts) => {
   });
 
   fastify.register(cors, {
-    origin: true,
-    methods: ["POST", "OPTIONS"],
-    allowedHeaders: ["content-type"],
-    maxAge: 86400,
+    origin: ["http://localhost:3041"],
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   });
 
   await fastify.register(fastifyAutoload, {

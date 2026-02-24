@@ -10,6 +10,7 @@ export default fp(async (app: FastifyInstance) => {
     request.ctx = {
       clickhouse: app.clickhouse,
       prisma: app.prisma,
+      redis: app.redis,
     } satisfies AppContext;
   });
 });
