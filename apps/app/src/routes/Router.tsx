@@ -4,26 +4,24 @@ import WebsitesPage from "../pages/WebsitesPage";
 import LoginPage from "../pages/LoginPage";
 import SignupPage from "../pages/SignupPage";
 import ProtectedRoute from "./ProtectedRoute";
+import MainLayout from "../shared/layouts/MainLayout";
+import AddWebsitePage from "../pages/AddWebsitePage";
 
 export default function Router() {
   return (
     <Routes>
       <Route
-        path="/"
         element={
           <ProtectedRoute>
-            <DashboardPage />
+            <MainLayout />
           </ProtectedRoute>
         }
-      />
-      <Route
-        path="/websites"
-        element={
-          <ProtectedRoute>
-            <WebsitesPage />
-          </ProtectedRoute>
-        }
-      />
+      >
+        <Route path="/sites" element={<WebsitesPage />} />
+        <Route path="/sites/add" element={<AddWebsitePage />} />
+        <Route path="/sites/:domain" element={<DashboardPage />} />
+      </Route>
+
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
       {/* <Route element={<MainLayout />}>{renderRoutes(routes)}</Route> */}

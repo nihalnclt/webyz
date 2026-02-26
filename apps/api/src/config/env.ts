@@ -16,3 +16,5 @@ export const KAFKA_TRACK_TOPIC = process.env.KAFKA_TOPIC || "tracking-events";
 export const MAXMIND_LICENSE_KEY = process.env.MAXMIND_LICENSE_KEY!;
 
 export const FRONTEND_URL = process.env.FRONTEND_URL ?? "http://localhost:3041";
+
+export const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY!;

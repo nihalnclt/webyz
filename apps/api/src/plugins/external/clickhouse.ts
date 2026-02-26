@@ -1,14 +1,8 @@
 import fp from "fastify-plugin";
+import { clickhouse } from "../../lib/clickhouse.js";
 import { createClient } from "@clickhouse/client";
 
 export default fp(async (fastify) => {
-  const clickhouse = createClient({
-    host: process.env.CLICKHOUSE_HOST,
-    username: process.env.CLICKHOUSE_USER,
-    password: process.env.CLICKHOUSE_PASSWORD,
-    database: "webyz_analytics",
-  });
-
   fastify.decorate("clickhouse", clickhouse);
 });
 

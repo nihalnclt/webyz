@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { updateGeoDB } from "../src/core/geo/geo-uploader.js";
+import { updateGeoDB } from "../src/core/geo/geo-updater.service.js";
 
 const run = async () => {
   try {

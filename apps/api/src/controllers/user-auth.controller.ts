@@ -6,12 +6,12 @@ import {
   loginUser,
   registerUser,
   upsertGoogleUser,
-} from "../core/auth/users.js";
+} from "../core/auth/users.service.js";
 import {
   ChangePasswordInput,
   LoginUserInput,
   RegisterUserInput,
-} from "../core/auth/types.js";
+} from "../core/auth/auth.types.js";
 import {
   getRequestMeta,
   getSessionCookieOptions,
@@ -22,7 +22,7 @@ import {
   revokeAllSessions,
   revokeOtherSessions,
   revokeSession,
-} from "../core/auth/sessions.js";
+} from "../core/auth/sessions.service.js";
 import { SESSION_COOKIE_NAME } from "../config/constants.js";
 import {
   buildGoogleAuthUrl,

@@ -1,6 +1,6 @@
 import { ClickHouseClient } from "@clickhouse/client";
 import { toUnixSeconds } from "../../utils/time.js";
-import { EventData } from "../../core/tracker/types.js";
+import { EventData } from "../../core/tracker/tracker.types.js";
 
 export const insertEvent = async (
   clickhouse: ClickHouseClient,

@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
@@ -14,18 +8,25 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  name      String   @db.Text
-  email     String   @unique @db.Text
-  password  String?  @db.Text
-  avatarUrl String?  @map("avatar_url") @db.Text
-  googleId  String?  @unique
-  provider  String   @default("email") // 'email' | 'google' | 'email_google'
-  isActive  Boolean  @default(true) @map("is_active")
+  id        String  @id @default(uuid())
+  name      String  @db.Text
+  email     String  @unique @db.Text
+  password  String? @db.Text
+  avatarUrl String? @map("avatar_url") @db.Text
+
+  googleId String? @unique @map("google_id")
+  provider String  @default("email")
+
+  isActive Boolean @default(true) @map("is_active")
+
+  stripeCustomerId String? @unique @map("stripe_customer_id")
+
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
-  sessions Session[]
+  sessions      Session[]
+  websites      Website[]
+  subscriptions Subscription[]
 
   @@map("users")
 }
@@ -46,12 +47,163 @@ model Session {
 }
 
 model Website {
-  id        String   @id @default(uuid())
-  name      String
-  domain    String   @unique
-  timezone  String   @default("UTC")
+  id       String @id @default(uuid())
+  name     String
+  domain   String @unique
+  timezone String @default("UTC")
+  userId   String @map("user_id") @db.Text
+
+  // Flipped by enforce-limits job when a free-plan website exceeds its quota.
+  // Checked at ingest time before writing events to ClickHouse.
+  isBlocked Boolean   @default(false) @map("is_blocked")
+  blockedAt DateTime? @map("blocked_at") @db.Timestamptz(6)
+
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([isBlocked])
   @@map("websites")
+}
+
+model Plan {
+  id          String  @id @default(uuid())
+  name        String
+  description String?
+
+  monthlyPrice Int @map("monthly_price") // cents
+  yearlyPrice  Int @map("yearly_price") // cents
+
+  // Events included in base price before overage kicks in
+  eventLimit Int @map("event_limit")
+
+  // Non-null = PAYG plan (charge overage). Null = hard-block at limit (free tier).
+  extraPricePer100k Int? @map("extra_price_per_100k") // cents per 100k overage events
+
+  dataRetentionDays Int @default(180) @map("data_retention_days")
+  websiteLimit      Int @default(1) @map("website_limit")
+
+  stripePriceMonthlyId String? @unique @map("stripe_price_monthly_id")
+  stripePriceYearlyId  String? @unique @map("stripe_price_yearly_id")
+  stripeMeteredPriceId String? @map("stripe_metered_price_id")
+
+  isFree   Boolean @default(false) @map("is_free")
+  isActive Boolean @default(true) @map("is_active")
+  isPublic Boolean @default(true) @map("is_public") // false = custom/enterprise plan
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  subscriptions Subscription[]
+
+  @@map("plans")
+}
+
+model Subscription {
+  id     String @id @default(uuid())
+  userId String @map("user_id")
+  planId String @map("plan_id")
+
+  status SubscriptionStatus @default(ACTIVE)
+
+  stripeSubscriptionId  String? @unique @map("stripe_subscription_id")
+  stripeRecurringItemId String? @map("stripe_recurring_item_id") // fixed monthly/yearly item
+  stripeMeteredItemId   String? @map("stripe_metered_item_id") // metered overage item
+
+  billingCycle BillingCycle @default(MONTHLY) @map("billing_cycle")
+
+  currentPeriodStart DateTime? @map("current_period_start") @db.Timestamptz(6)
+  currentPeriodEnd   DateTime? @map("current_period_end") @db.Timestamptz(6)
+
+  cancelAtPeriodEnd Boolean   @default(false) @map("cancel_at_period_end")
+  trialEndsAt       DateTime? @map("trial_ends_at") @db.Timestamptz(6)
+  canceledAt        DateTime? @map("canceled_at") @db.Timestamptz(6)
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  user                User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan                Plan                 @relation(fields: [planId], references: [id])
+  billingPeriodUsages BillingPeriodUsage[]
+  usageRecords        UsageRecord[]
+
+  @@index([userId])
+  @@index([status])
+  @@index([currentPeriodEnd])
+  @@index([stripeSubscriptionId])
+  @@map("subscriptions")
+}
+
+// One row per subscription per billing period.
+// Synced hourly from ClickHouse by Job 1.
+// Used by dashboard, Job 2 (Stripe reporting), and Job 3 (limit enforcement).
+model BillingPeriodUsage {
+  id             String @id @default(uuid())
+  subscriptionId String @map("subscription_id")
+
+  periodStart DateTime @map("period_start") @db.Timestamptz(6)
+  periodEnd   DateTime @map("period_end") @db.Timestamptz(6)
+
+  // Live event count pulled from ClickHouse. Updated every hour.
+  totalEvents BigInt @default(0) @map("total_events")
+
+  // Prevents duplicate warning emails. Stores last threshold sent: 0.8, 0.9, or 1.0
+  lastWarnedThreshold Float? @map("last_warned_threshold")
+
+  // Set when overage has been reported to Stripe for this period.
+  // Null = not yet reported (or within limit).
+  overageReportedAt DateTime? @map("overage_reported_at") @db.Timestamptz(6)
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  subscription Subscription  @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  usageRecords UsageRecord[]
+
+  @@unique([subscriptionId, periodStart])
+  @@index([subscriptionId])
+  @@index([overageReportedAt])
+  @@map("billing_period_usages")
+}
+
+// One row per Stripe metered usage report.
+// Created by Job 2 when a PAYG subscription has overage to bill.
+model UsageRecord {
+  id                   String @id @default(uuid())
+  subscriptionId       String @map("subscription_id")
+  billingPeriodUsageId String @map("billing_period_usage_id")
+
+  // Raw overage event count (totalEvents - plan.eventLimit)
+  overageEvents BigInt @map("overage_events")
+
+  // What we actually send to Stripe (overageEvents / 100_000, ceiling)
+  stripeQuantity Int @map("stripe_quantity")
+
+  stripeUsageRecordId String?   @map("stripe_usage_record_id")
+  reportedToStripe    Boolean   @default(false) @map("reported_to_stripe")
+  reportedAt          DateTime? @map("reported_at") @db.Timestamptz(6)
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  subscription       Subscription       @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  billingPeriodUsage BillingPeriodUsage @relation(fields: [billingPeriodUsageId], references: [id])
+
+  @@index([subscriptionId, reportedToStripe])
+  @@index([reportedToStripe])
+  @@map("usage_records")
+}
+
+enum BillingCycle {
+  MONTHLY
+  YEARLY
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELED
+  PAST_DUE
+  TRIALING
+  INCOMPLETE
+  UNPAID
 }

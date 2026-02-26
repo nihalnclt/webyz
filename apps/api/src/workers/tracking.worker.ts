@@ -1,7 +1,7 @@
 import { createClient } from "@clickhouse/client";
 import { Kafka } from "kafkajs";
 
-import { track } from "../core/tracker/track.js";
+import { track } from "../core/tracker/tracking.service.js";
 import { KAFKA_BROKERS, KAFKA_TRACK_TOPIC } from "../config/env.js";
 import { normalizeKafkaTracking } from "../ingest/normalize/normalize-kafka-tracking.js";
 

@@ -2,7 +2,7 @@ import { ClickHouseClient } from "@clickhouse/client";
 
 import { toClickHouseDateTime64 } from "../../utils/time.js";
 import { SessionRow } from "./types.js";
-import { SessionData } from "../../core/tracker/types.js";
+import { SessionData } from "../../core/tracker/tracker.types.js";
 
 export const getSession = async (
   clickhouse: ClickHouseClient,

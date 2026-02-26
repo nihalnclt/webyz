@@ -2,7 +2,7 @@ import { FastifyRequest } from "fastify";
 
 import { TrackingPayload } from "../types.js";
 import { KAFKA_ENABLED, KAFKA_TRACK_TOPIC } from "../../config/env.js";
-import { track } from "../../core/tracker/track.js";
+import { track } from "../../core/tracker/tracking.service.js";
 import { normalizeTracking } from "../normalize/normalize-tracking.js";
 
 export const publishTracking = async (

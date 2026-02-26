@@ -26,7 +26,7 @@ export default async function trackerRoutes(fastify: FastifyInstance) {
   fastify.get("/:siteId/os", getOsStatsController);
   fastify.get("/:siteId/os-versions", getOsVersionsStatsController);
   fastify.get("/:siteId/device-types", getDeviceTypeStatsController);
-  fastify.get("/:siteId/pages", getTopPagesStatsController);
+  fastify.get("/:siteId/top-pages", getTopPagesStatsController);
   fastify.get("/:siteId/entry-pages", getEntryPagesStatsController);
   fastify.get("/:siteId/exit-pages", getExitPagesStatsController);
 

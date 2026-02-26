@@ -1,6 +1,6 @@
 import type { FastifyRequest, FastifyReply } from "fastify";
 import { SESSION_COOKIE_NAME } from "../config/constants.js";
-import { validateSession } from "../core/auth/sessions.js";
+import { validateSession } from "../core/auth/sessions.service.js";
 
 declare module "fastify" {
   interface FastifyRequest {

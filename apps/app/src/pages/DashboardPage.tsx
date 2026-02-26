@@ -1,44 +1,12 @@
-import {
-  BarChart,
-  Download,
-  Moon,
-  Globe,
-  MoreVertical,
-  TrendingUp,
-} from "lucide-react";
+import { BarChart, Download, MoreVertical, TrendingUp } from "lucide-react";
 
-import LineChart from "../features/dashboard/components/LineChart";
+import MainGraph from "../features/dashboard/components/MainGraph";
 import ContentSection from "../features/dashboard/components/content/ContentSection";
+import TopStats from "../features/dashboard/components/TopStats";
 
 export default function DashboardPage() {
   return (
     <div>
-      <div className="w-280 max-w-full mx-auto py-5 flex items-center justify-between">
-        <h1 className="font-semibold text-xl">WEBYZ</h1>
-        <div className="flex items-center gap-6">
-          <button className="text-[22px]">
-            <Globe />
-          </button>
-          <button className="text-[22px]">
-            <Moon />
-          </button>
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full overflow-hidden bg-[#f1f1f1]">
-              <img
-                src="https://newprofilepic.photo-cdn.net//assets/images/article/profile.jpg?90af0c8"
-                alt=""
-                width={40}
-                height={40}
-              />
-            </div>
-            <div>
-              <span className="block">Nihal N</span>
-              <span className="block text-sm">nihal@gmail.com</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
       <div className="bg-white sticky top-0">
         <div className="w-280 max-w-full mx-auto flex items-center justify-between py-4">
           <div className="flex items-center gap-3">
@@ -66,25 +34,7 @@ export default function DashboardPage() {
       </div>
 
       <div className="w-280 max-w-full mx-auto">
-        <div className="grid grid-cols-6 gap-3 border-t border-b py-4">
-          {Array.from({ length: 6 }).map((_, index) => {
-            return (
-              <div key={index} className="flex items-center gap-4 border-r">
-                {/* <div className="w-[40px] h-[40px] rounded-full bg-[#f1f1f1]"></div> */}
-                <div>
-                  <span>Total Views</span>
-                  <div className="flex items-center justify-between">
-                    <span>18</span>
-                    <div className="flex items-center gap-2 text-green-500 text-sm">
-                      <TrendingUp />
-                      <span>10%</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
+        <TopStats />
 
         <div className="mt-5 grid grid-cols-5 w-full h-125">
           <div className="col-span-4">
@@ -97,7 +47,7 @@ export default function DashboardPage() {
                 <option value="">Min</option>
               </select>
             </div>
-            <LineChart />
+            <MainGraph />
           </div>
           <div className="w-full h-full ">
             <div className="py-4 border-b flex items-center gap-4 justify-between">

@@ -2,7 +2,7 @@ import fp from "fastify-plugin";
 import type { Redis as RedisType } from "ioredis";
 import type { FastifyInstance } from "fastify";
 
-import { redis } from "../../core/redis.js";
+import { redis } from "../../lib/redis.js";
 
 declare module "fastify" {
   interface FastifyInstance {

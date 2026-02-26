@@ -6,6 +6,8 @@ export default function TopPagesTab() {
   const { data, isLoading } = useTopPages(true);
   const [open, setOpen] = useState(false);
 
+  console.log(data);
+
   return (
     <div>
       <div className="flex items-center justify-between">
@@ -23,10 +25,10 @@ export default function TopPagesTab() {
 
         {isLoading && <p>Loading...</p>}
 
-        {data?.slice(0, 5).map((item: any) => (
+        {data?.data?.results?.slice(0, 5).map((item: any) => (
           <div key={item.id} className="flex items-center justify-between py-2">
-            <span className="flex-1">{item.name}</span>
-            <span>{item.count}</span>
+            <span className="flex-1">{item.page}</span>
+            <span>{item.visitors}</span>
           </div>
         ))}
       </div>

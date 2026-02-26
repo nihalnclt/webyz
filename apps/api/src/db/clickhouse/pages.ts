@@ -16,13 +16,13 @@ export const topPagesStatsBasicQuery = async (
   const query = `
     SELECT
       url_path AS page,
-      countDistinct(session_id) AS visitors
+      countDistinct(session_id) AS visitors,
       count() AS pageviews
     FROM events
     WHERE website_id = {websiteId:String}
       AND event_type = 'pageview'
-      AND timestamp BETEWEEN fromUnixTimestamp({to:UInt32})
-                        AND fromUnixTimestamp({from:UInt32}) 
+      AND timestamp BETWEEN fromUnixTimestamp({from:UInt32})
+                        AND fromUnixTimestamp({to:UInt32}) 
     GROUP BY url_path
     ORDER BY visitors DESC
     LIMIT {limit:UInt32} OFFSET {offset:UInt32}

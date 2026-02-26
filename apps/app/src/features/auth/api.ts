@@ -15,3 +15,8 @@ export const getMe = async () => {
   const res = await api.get("/users/auth/me");
   return res.data;
 };
+
+export const logoutApi = async (data: LoginFormData) => {
+  const res = await api.post("/users/auth/logout", data);
+  return res.data;
+};
